@@ -14,6 +14,18 @@ var mainMenu = new Menu("TIC-TAC-TWO", [
     {
         Shortcut = "N",
         Title = "New Game"
+    },
+    
+    new MenuItem()
+    {
+        Shortcut = "L",
+        Title = "Load Game"
+    },
+    
+    new MenuItem()
+    {
+        Shortcut = "E",
+        Title = "Exit"
     }
 ]);
 
