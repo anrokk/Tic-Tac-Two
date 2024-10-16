@@ -3,8 +3,39 @@
 
 using MenuSystem;
 
-var mainMenu = new Menu("TIC-TAC-TWO", [
-    
+
+var deepMenu = new Menu(EMenuLevel.Deep,
+    "TIC-TAC-TWO",
+    [
+        new MenuItem()
+        {
+            Shortcut = "X",
+            Title = "X",
+            MenuItemAction = null
+        }
+    ]);
+
+var optionsMenu = new Menu(EMenuLevel.Secondary,
+    "TIC-TAC-TWO | Options Menu",
+    [
+        new MenuItem()
+        {
+            Shortcut = "X",
+            Title = "Player X starts",
+            MenuItemAction =  deepMenu.Run
+        },
+        new MenuItem()
+        {
+            Shortcut = "O",
+            Title = "Player O starts",
+            MenuItemAction =  null
+        },
+    ]);
+
+
+var mainMenu = new Menu(EMenuLevel.Main,
+    "TIC-TAC-TWO | Main Menu", 
+    [
     new MenuItem()
     {
         Shortcut = "N",
@@ -23,15 +54,10 @@ var mainMenu = new Menu("TIC-TAC-TWO", [
     {
         Shortcut = "O",
         Title = "Options",
-        MenuItemAction = null
-    },
-    
-    new MenuItem()
-    {
-        Shortcut = "E",
-        Title = "Exit"
+        MenuItemAction = optionsMenu.Run
     }
 ]);
+
 
 mainMenu.Run();
 

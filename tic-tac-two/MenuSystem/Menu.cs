@@ -3,11 +3,31 @@ namespace MenuSystem;
 public class Menu
 {
     private string MenuHeader { get; set; }
-    private static string _menuDivider = "-------------";
+    private static string _menuDivider = "------------------------";
     private List<MenuItem> MenuItems { get; set; }
+
+    private MenuItem _menuItemExit = new MenuItem()
+    {
+        Shortcut = "E",
+        Title = "Exit",
+    };
+    
+    private MenuItem _menuItemReturn = new MenuItem()
+    {
+        Shortcut = "R",
+        Title = "Return",
+    };
+    
+    private MenuItem _menuItemReturnMain = new MenuItem()
+    {
+        Shortcut = "M",
+        Title = "Return to Main Menu",
+    };
+    
+    private EMenuLevel _menuLevel { get; set; }
     
 
-    public Menu(string menuHeader, List<MenuItem> menuItems)
+    public Menu(EMenuLevel menuLevel, string menuHeader, List<MenuItem> menuItems)
     {
 
         if (string.IsNullOrWhiteSpace(menuHeader))
@@ -23,15 +43,52 @@ public class Menu
         }
         
         MenuItems = menuItems;
+        _menuLevel = menuLevel;
+        
+        if (_menuLevel != EMenuLevel.Main)
+        {
+            MenuItems.Add(_menuItemReturn);
+        }
+        
+        if (_menuLevel == EMenuLevel.Deep)
+        {
+            MenuItems.Add(_menuItemReturnMain);
+        }
+        
+        MenuItems.Add(_menuItemExit);
         
     }
 
-    public void Run()
+    public string Run()
     {
         Console.Clear();
 
-        var menuItem = DisplayMenuGetUserChoice();
+        do
+        {
+            var menuItem = DisplayMenuGetUserChoice();
+            var menuReturnValue = "";
+        
+            if (menuItem.MenuItemAction != null)
+            {
+                menuReturnValue = menuItem.MenuItemAction();
+            }
 
+            if (menuItem.Shortcut == _menuItemReturn.Shortcut)
+            {
+                return menuItem.Shortcut;
+            }
+            
+            if (menuItem.Shortcut == _menuItemExit.Shortcut || menuReturnValue == _menuItemExit.Shortcut)
+            {
+                return _menuItemExit.Shortcut;
+            }
+
+            if ((menuItem.Shortcut == _menuItemReturnMain.Shortcut || menuReturnValue == _menuItemReturnMain.Shortcut)
+                && _menuLevel != EMenuLevel.Main)
+            {
+                return _menuItemReturnMain.Shortcut;
+            }
+        } while (true);
     }
 
     private MenuItem DisplayMenuGetUserChoice()
