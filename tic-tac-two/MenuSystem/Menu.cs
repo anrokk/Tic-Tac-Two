@@ -7,15 +7,15 @@ public class Menu
     private List<MenuItem> MenuItems { get; set; }
     
 
-    public Menu(string header, List<MenuItem> menuItems)
+    public Menu(string menuHeader, List<MenuItem> menuItems)
     {
 
-        if (string.IsNullOrWhiteSpace(header))
+        if (string.IsNullOrWhiteSpace(menuHeader))
         {
             throw new ApplicationException("Menu header cannot be empty");
         }
         
-        MenuHeader = header;
+        MenuHeader = menuHeader;
         
         if (menuItems == null || menuItems.Count == 0)
         {
@@ -28,9 +28,16 @@ public class Menu
 
     public void Run()
     {
-        
-        var userInput = "";
+        Console.Clear();
 
+        var menuItem = DisplayMenuGetUserChoice();
+
+    }
+
+    private MenuItem DisplayMenuGetUserChoice()
+    {
+        var userInput = "";
+        
         do
         {
             DrawMenu();
@@ -45,40 +52,33 @@ public class Menu
             else
             {
                 userInput = userInput.ToUpper();
-                var userInputOk = false;
                 
                 foreach (var menuItem in MenuItems)
                 {
                     if (menuItem.Shortcut.ToUpper() != userInput) continue;
-                    userInputOk = true;
-                    break;
-                }
-
-                if (userInputOk == false)
-                {
-                    userInput = "";
-                    Console.WriteLine("Please choose an option");
-                    Console.WriteLine();
-                }
+                    return menuItem;
+                } 
+                
+                Console.WriteLine("Please choose a valid option"); 
+                Console.WriteLine();
             }
-            
-        } while (string.IsNullOrWhiteSpace(userInput));
+        } while (true);
     }
+    
 
     private void DrawMenu()
     {
-        Console.Clear();
         Console.WriteLine(MenuHeader);
         Console.WriteLine(_menuDivider);
 
-        foreach (var menuItem in MenuItems)
+        foreach (var t in MenuItems)
         {
-            Console.WriteLine(menuItem);
+            Console.WriteLine(t);
         }
         
         Console.WriteLine();
         
-        Console.Write(">");
+        Console.Write(">>>");
     }
 
 
