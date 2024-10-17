@@ -5,6 +5,10 @@ public class TicTacTwoBrain
     private EGamePiece[,] _gameBoard;
     private EGamePiece _nextMoveBy { get; set; } = EGamePiece.X;
 
+    public TicTacTwoBrain() : this(5)
+    {
+        
+    }
     public TicTacTwoBrain(int boardSize) : this(boardSize, boardSize)
     {
         
@@ -20,6 +24,9 @@ public class TicTacTwoBrain
         get => GetBoard();
         private set => _gameBoard = value;
     }
+    
+    public int DimensionX => _gameBoard.GetLength(0);
+    public int DimensionY => _gameBoard.GetLength(1);
 
     private EGamePiece[,] GetBoard()
     {
@@ -45,5 +52,12 @@ public class TicTacTwoBrain
         _gameBoard[x, y] = _nextMoveBy;
         _nextMoveBy = _nextMoveBy == EGamePiece.X ? EGamePiece.O : EGamePiece.X;
         return true;
+    }
+
+    public void ResetGame()
+    {
+        _gameBoard = new EGamePiece[_gameBoard.GetLength(0), _gameBoard.GetLength(1)];
+        _nextMoveBy = EGamePiece.X;
+
     }
 }
