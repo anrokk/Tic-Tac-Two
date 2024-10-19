@@ -4,7 +4,20 @@
 using GameLogic;
 using MenuSystem;
 
-var gameInstance = new TicTacTwoBrain();
+var gameConfigurations = new List<GameConfiguration>()
+{
+    new GameConfiguration()
+    {
+        Name = "Classical Tic-Tac-Two"
+    },
+    new GameConfiguration()
+    {
+        Name = "To Be Implemented"
+    },
+
+};
+
+var gameInstance = new TicTacTwoBrain(5);
 
 
 var deepMenu = new Menu(EMenuLevel.Deep,
@@ -67,39 +80,22 @@ mainMenu.Run();
 
 // ===================
 
-string DrawGamePiece(EGamePiece piece)
-{
-    return piece switch
-    {
-        EGamePiece.O => "O",
-        EGamePiece.X => "X",
-        _ => " "
-    };
-}
 
 string NewGame()
 {
-    for (int y = 0; y < gameInstance.DimensionY; y++)
-    {
-        for (int x = 0; x < gameInstance.DimensionX; x++)
-        {
-            Console.Write(" " + DrawGamePiece(gameInstance.GameBoard[x, y]) + " ");
-            if (x != gameInstance.DimensionX -1)
-            {
-                Console.Write("|");
-            }
-        }
-        Console.WriteLine();
-    }
-    Console.WriteLine("   |   |   |   |   ");
-    Console.WriteLine("---+---+---+---+---");
-    Console.WriteLine("   |   |   |   |   ");
-    Console.WriteLine("---+---+---+---+---");
-    Console.WriteLine("   |   |   |   |   ");
-    Console.WriteLine("---+---+---+---+---");
-    Console.WriteLine("   |   |   |   |   ");
-    Console.WriteLine("---+---+---+---+---");
-    Console.WriteLine("   |   |   |   |   ");
+
+    ConsoleUI.Visualize.DrawBoard(gameInstance);
+    
+    Console.Write("Please enter coordinates to place piece <x, y>:");
+
+    var input = Console.ReadLine()!;
+    var inputSplit = input.Split(",");
+    var inputX = int.Parse(inputSplit[0]);
+    var inputY = int.Parse(inputSplit[1]);
+    gameInstance.MakeAMove(inputX, inputY);
+    
+    
+    
     return "";
 }
 
