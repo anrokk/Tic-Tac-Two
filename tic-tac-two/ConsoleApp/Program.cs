@@ -1,23 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 
+using DAL;
 using GameLogic;
 using MenuSystem;
 
-var gameConfigurations = new List<GameConfiguration>()
-{
-    new GameConfiguration()
-    {
-        Name = "Classical Tic-Tac-Two"
-    },
-    new GameConfiguration()
-    {
-        Name = "To Be Implemented"
-    },
-
-};
-
-var gameInstance = new TicTacTwoBrain(5);
+var configRepository = new ConfigRepository();
 
 
 var deepMenu = new Menu(EMenuLevel.Deep,
@@ -83,6 +71,34 @@ mainMenu.Run();
 
 string NewGame()
 {
+    var configMenuItems = new List<MenuItem>();
+
+    for (int i = 0; i < configRepository.GetConfigurationNames().Count; i++)
+    {
+        configMenuItems.Add(new MenuItem()
+        {
+            Title = configRepository.GetConfigurationNames()[i],
+            Shortcut = i.ToString()
+        });
+    }
+    
+    var configMenu = new Menu(EMenuLevel.Deep,
+        "TIC-TAC-TWO - Choose Game Config",
+        configMenuItems
+    );
+
+    var chosenConfigShortcut = configMenu.Run();
+
+    if (!int.TryParse(chosenConfigShortcut, out var configNo))
+    {
+        return chosenConfigShortcut;
+    }
+
+    var chosenConfig = configRepository.GetConfigurationByName(
+            configRepository.GetConfigurationNames()[configNo]
+    );
+    
+    var gameInstance = new TicTacTwoBrain(chosenConfig);
 
     ConsoleUI.Visualize.DrawBoard(gameInstance);
     
