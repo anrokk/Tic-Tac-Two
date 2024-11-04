@@ -2,7 +2,7 @@
 
 namespace DAL;
 
-public class ConfigRepository
+public class ConfigRepositoryHardcoded : IConfigRepository
 {
     private List<GameConfiguration> _gameConfigurations = new List<GameConfiguration>()
     {
@@ -14,7 +14,7 @@ public class ConfigRepository
         {
             Name = "Big board",
             BoardSizeWidth = 10,
-            BoardSizeHeight = 20,
+            BoardSizeHeight = 10,
             WinCondition = 4,
             MovePieceAfterNMoves = 3,
         },
