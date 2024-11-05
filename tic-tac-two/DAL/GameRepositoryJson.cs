@@ -1,0 +1,18 @@
+
+
+
+namespace DAL;
+
+public class GameRepositoryJson : IGameRepository
+{
+    
+    public void SaveGame(string jsonStateString, string gameConfigName)
+    {
+        var fileName = FileHelper.BasePath +
+                       gameConfigName + " " +
+                       DateTime.Now.ToString("yyyy-MM-dd--HH--mm--ss") +
+                       FileHelper.GameExtension;
+        File.WriteAllText(fileName, jsonStateString);
+    }
+    
+}

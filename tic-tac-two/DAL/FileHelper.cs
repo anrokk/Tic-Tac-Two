@@ -1,6 +1,6 @@
 namespace DAL;
 
-public class FileHelper
+public static class FileHelper
 {
     public const string GameExtension = ".game.json";
     public const string ConfigExtension = ".config.json";

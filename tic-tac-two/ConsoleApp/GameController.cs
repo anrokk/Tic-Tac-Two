@@ -8,24 +8,40 @@ public static class GameController
 {
 
     private static readonly IConfigRepository ConfigRepository = new ConfigRepositoryJson();
+    private static readonly IGameRepository GameRepository = new GameRepositoryJson();
     
-    public static string MainLoop()
+    public static string StartNewGame()
     {
-        var chosenConfigShortcut = ChooseConfiguration();
-        if (!int.TryParse(chosenConfigShortcut, out var configNo))
-        {
-            return chosenConfigShortcut;
-        }
+        return MainLoop();
+    }
 
-        var chosenConfig = ConfigRepository.GetConfigurationByName(
-            ConfigRepository.GetConfigurationNames()[configNo]
-        );
+    public static string LoadSavedGame()
+    {
+        //TODO
+        return "foobar";
+    }
     
-        var gameInstance = new TicTacTwoBrain(chosenConfig);
+    public static string MainLoop(TicTacTwoBrain? gameInstance = null)
+    {
+        if (gameInstance == null)
+        {
+            var chosenConfigShortcut = ChooseConfiguration();
+            
+            if (!int.TryParse(chosenConfigShortcut, out var configNo))
+            {
+                return chosenConfigShortcut;
+            }
+
+            var chosenConfig = ConfigRepository.GetConfigurationByName(
+                ConfigRepository.GetConfigurationNames()[configNo]
+            ); 
+        
+            gameInstance = new TicTacTwoBrain(chosenConfig);
+        }
         
         do
         {
-            ConsoleUI.Visualize.DrawBoard(gameInstance);
+            ConsoleUI.Visualizer.DrawBoard(gameInstance);
     
             Console.Write("Please enter coordinates to place piece <x, y>:");
             var input = Console.ReadLine()!;

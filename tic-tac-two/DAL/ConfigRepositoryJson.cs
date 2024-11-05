@@ -1,44 +1,49 @@
+using System.Text.Json;
 using GameLogic;
 
 namespace DAL;
 
 public class ConfigRepositoryJson : IConfigRepository
 {
-
-    private readonly string _basePath = System.Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) +
-                                        Path.DirectorySeparatorChar + "tic-tac-two" + Path.DirectorySeparatorChar;
-    
     public List<string> GetConfigurationNames()
     {
         CheckAndCreateConfig();
         
-        return System.IO.Directory.GetFiles(FileHelper.BasePath,"*" + FileHelper.ConfigExtension).ToList();
+        return Directory
+            .GetFiles(FileHelper.BasePath, "*" + FileHelper.ConfigExtension)
+            .Select(fullFileName => 
+                Path.GetFileNameWithoutExtension(
+                    Path.GetFileNameWithoutExtension(fullFileName)
+                )
+            )
+            .ToList();
     }
 
     public GameConfiguration GetConfigurationByName(string name)
     {
-        throw new NotImplementedException();
+        var configJsonStr = File.ReadAllText(FileHelper.BasePath + name + FileHelper.ConfigExtension);
+        var config = JsonSerializer.Deserialize<GameConfiguration>(configJsonStr);
+        
+        return config;  
+        // TODO check for possible errors, scenario: maybe if there is no config with such name
     }
 
-    private void CheckAndCreateConfig()
+    private static void CheckAndCreateConfig()
     {
         if (!Directory.Exists(FileHelper.BasePath))
         {
             Directory.CreateDirectory(FileHelper.BasePath);
         }
-
-        var data = System.IO.Directory.GetFiles(FileHelper.BasePath, "*" + FileHelper.ConfigExtension).ToList();
         
-        if (data.Count == 0)
+        var hardcodedRepo = new ConfigRepositoryHardcoded();
+        var optionNames = hardcodedRepo.GetConfigurationNames();
+        
+        foreach (var optionName in optionNames)
         {
-            var hardcodedRepo = new ConfigRepositoryHardcoded();
-            var optionNames = hardcodedRepo.GetConfigurationNames();
-            foreach (var optionName in optionNames)
-            {
-                var gameOption = hardcodedRepo.GetConfigurationByName(optionName);
-                var optionJsonStr = System.Text.Json.JsonSerializer.Serialize(gameOption);
-                File.WriteAllText(FileHelper.BasePath + gameOption.Name + FileHelper.ConfigExtension, optionJsonStr);
-            }
+            var gameOption = hardcodedRepo.GetConfigurationByName(optionName);
+            var optionJsonStr = JsonSerializer.Serialize(gameOption);
+            File.WriteAllText(FileHelper.BasePath + gameOption.Name + FileHelper.ConfigExtension, optionJsonStr);
         }
+        
     }
 }

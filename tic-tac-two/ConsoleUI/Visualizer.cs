@@ -2,7 +2,7 @@
 
 namespace ConsoleUI;
 
-public static class Visualize
+public static class Visualizer
 {
     public static void DrawBoard(TicTacTwoBrain gameInstance)
     {
@@ -10,7 +10,7 @@ public static class Visualize
         {
             for (var x = 0; x < gameInstance.DimensionX; x++)
             {
-                Console.Write(" " + DrawGamePiece(gameInstance.GameBoard[x, y]) + " ");
+                Console.Write(" " + DrawGamePiece(gameInstance.GameBoard[x][y]) + " ");
                 
                 if (x != gameInstance.DimensionX - 1)
                 {
