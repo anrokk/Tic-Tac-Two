@@ -28,6 +28,13 @@ public class ConfigRepositoryJson : IConfigRepository
         // TODO check for possible errors, scenario: maybe if there is no config with such name
     }
 
+    public void SaveConfiguration(GameConfiguration config)
+    {
+        var optionJsonStr = JsonSerializer.Serialize(config);
+        File.WriteAllText(FileHelper.BasePath + config.Name + FileHelper.ConfigExtension, optionJsonStr);
+    }
+    
+
     private static void CheckAndCreateConfig()
     {
         if (!Directory.Exists(FileHelper.BasePath))

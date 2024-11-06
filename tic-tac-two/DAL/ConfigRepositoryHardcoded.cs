@@ -4,12 +4,13 @@ namespace DAL;
 
 public class ConfigRepositoryHardcoded : IConfigRepository
 {
-    private List<GameConfiguration> _gameConfigurations = new List<GameConfiguration>()
-    {
+    private static readonly List<GameConfiguration> GameConfigurations =
+    [
         new GameConfiguration()
         {
             Name = "Classical Tic-Tac-Two"
         },
+
         new GameConfiguration()
         {
             Name = "Big board",
@@ -17,20 +18,24 @@ public class ConfigRepositoryHardcoded : IConfigRepository
             BoardSizeHeight = 10,
             WinCondition = 4,
             MovePieceAfterNMoves = 3,
-        },
-
-    };
+        }
+    ];
 
     public List<string> GetConfigurationNames()
     {
-        return _gameConfigurations
+        return GameConfigurations
             .Select(config => config.Name)
             .ToList();
     }
 
-    public GameConfiguration GetConfigurationByName(string name)
+    public GameConfiguration GetConfigurationByName(string configName)
     {
-        return _gameConfigurations.Single(c => c.Name == name);
+        return GameConfigurations.Single(config => config.Name == configName);
+    }
+
+    public void SaveConfiguration(GameConfiguration config)
+    {
+        GameConfigurations.Add(config);
     }
     
 }

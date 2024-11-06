@@ -1,6 +1,7 @@
 using DAL;
 using GameLogic;
 using MenuSystem;
+using ConsoleUI;
 
 namespace ConsoleApp;
 
@@ -41,7 +42,7 @@ public static class GameController
         
         do
         {
-            ConsoleUI.Visualizer.DrawBoard(gameInstance);
+            Visualizer.DrawBoard(gameInstance);
     
             Console.Write("Please enter coordinates to place piece <x, y>:");
             var input = Console.ReadLine()!;
