@@ -2,19 +2,19 @@
 
 public class MenuItem
 {
-    private string _title = default!;
-    private string _shortcut = default!;
+    private readonly string _title = default!;
+    private readonly string _shortcut = default!;
 
     public Func<string>? MenuItemAction { get; set; }
 
     public string Title
     {
         get => _title;
-        set
+        init
         {
             if (string.IsNullOrEmpty(value))
             {
-                throw new ArgumentException("Title cannot be empty");
+                throw new ArgumentException("Title cannot be null or empty");
             }
 
             _title = value;
@@ -24,11 +24,11 @@ public class MenuItem
     public string Shortcut
     {
         get => _shortcut;
-        set
+        init
         {
             if (string.IsNullOrEmpty(value))
             {
-                throw new ArgumentException("Shortcut cannot be empty");
+                throw new ArgumentException("Shortcut cannot be null or empty");
             }
             _shortcut = value;
         }

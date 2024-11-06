@@ -5,24 +5,33 @@ using ConsoleUI;
 
 namespace ConsoleApp;
 
-public static class GameController
+public class GameController
 {
 
     private static readonly IConfigRepository ConfigRepository = new ConfigRepositoryJson();
     private static readonly IGameRepository GameRepository = new GameRepositoryJson();
     
-    public static string StartNewGame()
+    public string StartNewGame()
     {
         return MainLoop();
     }
 
-    public static string LoadSavedGame()
+    public string LoadSavedGame()
     {
-        //TODO
-        return "foobar";
+        var chosenGameShortcut = ChooseSavedGame();
+
+        if (!int.TryParse(chosenGameShortcut, out var gameNo))
+        {
+            return chosenGameShortcut;
+        }
+        
+        var chosenGame = GameRepository.LoadGame(GameRepository.GetGameNames()[gameNo]);
+        var gameInstance = new TicTacTwoBrain(chosenGame);
+        
+        return MainLoop(gameInstance);
     }
     
-    public static string MainLoop(TicTacTwoBrain? gameInstance = null)
+    private string MainLoop(TicTacTwoBrain? gameInstance = null)
     {
         if (gameInstance == null)
         {
@@ -62,7 +71,6 @@ public static class GameController
         for (int i = 0; i < ConfigRepository.GetConfigurationNames().Count; i++)
         {
             var returnValue = i.ToString();
-        
             configMenuItems.Add(new MenuItem()
             {
                 Title = ConfigRepository.GetConfigurationNames()[i],
@@ -70,13 +78,35 @@ public static class GameController
                 MenuItemAction = () => returnValue
             });
         }
-    
-        var configMenu = new Menu(EMenuLevel.Deep,
-            "TIC-TAC-TWO - Choose Game Config",
-            configMenuItems
-        );
+        var configMenu = new Menu(
+            "Choose game configuration", 
+            configMenuItems, EMenuLevel.Secondary, 
+            isCustomMenu: true);
 
         return configMenu.Run();
+    }
+
+    private static string ChooseSavedGame()
+    {
+        var gameMenuItems = new List<MenuItem>();
+
+        for (var i = 0; i < GameRepository.GetGameNames().Count; i++)
+        {
+            var returnValue = i.ToString();
+            gameMenuItems.Add(new MenuItem()
+            {
+                Title = GameRepository.GetGameNames()[i],
+                Shortcut = (i + 1).ToString(),
+                MenuItemAction = () => returnValue
+            });
+        }
+        var gameMenu = new Menu(
+            "Choose saved game", 
+            gameMenuItems, 
+            EMenuLevel.Secondary, 
+            isCustomMenu: true);
+        
+        return gameMenu.Run();
     }
     
 }

@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
-
-
 using ConsoleApp;
 
-Menus.MainMenu.Run();
+var menu = new Menus();
+
+menu.MainMenu.Run();
 
 
 

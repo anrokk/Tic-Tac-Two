@@ -1,50 +1,49 @@
+using DAL;
 using MenuSystem;
 
 namespace ConsoleApp;
 
-public static class Menus
+public class Menus
 {
-    public static readonly Menu OptionsMenu =
-        new Menu(EMenuLevel.Secondary,
-        "TIC-TAC-TWO | Options Menu",
-        [
-            new MenuItem()
-            {
-                Shortcut = "X",
-                Title = "Player X starts",
-                MenuItemAction = null
-            },
-            new MenuItem()
-            {
-                Shortcut = "O",
-                Title = "Player O starts",
-                MenuItemAction =  null
-            },
-        ]);
-    
-    public static Menu MainMenu =
-        new Menu(EMenuLevel.Main,
-        "TIC-TAC-TWO | Main Menu", 
-        [
-            new MenuItem()
-            {
-                Shortcut = "N",
-                Title = "New Game",
-                MenuItemAction = GameController.StartNewGame
-            },
-    
-            new MenuItem()
-            {
-                Shortcut = "L",
-                Title = "Load Game",
-                MenuItemAction = GameController.LoadSavedGame
-            },
-    
-            new MenuItem()
-            {
-                Shortcut = "O",
-                Title = "Options",
-                MenuItemAction = OptionsMenu.Run
-            }
-        ]);
+    private Menu OptionsMenu { get; }
+    public Menu MainMenu { get; }
+
+    public Menus()
+    {
+        IConfigRepository configRepository = new ConfigRepositoryJson();
+        var optionsController = new OptionsController(configRepository);
+        var gameController = new GameController();
+        
+        OptionsMenu =
+            new Menu("Options", [
+                new MenuItem()
+                {
+                    Title = "Create a new configuration",
+                    Shortcut = "C",
+                    MenuItemAction = optionsController.NewConfiguration
+                },
+            ], EMenuLevel.Secondary);
+        
+        MainMenu =
+            new Menu("TIC-TAC-TWO", [
+                new MenuItem()
+                {
+                    Title = "New Game",
+                    Shortcut = "N",
+                    MenuItemAction = gameController.StartNewGame
+                },
+                new MenuItem()
+                {
+                    Title = "Load Game",
+                    Shortcut = "L",
+                    MenuItemAction = gameController.LoadSavedGame
+                },
+                new MenuItem()
+                {
+                    Title = "Options",
+                    Shortcut = "O",
+                    MenuItemAction = OptionsMenu.Run
+                }
+            ], EMenuLevel.Main);
+    }
 }

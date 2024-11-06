@@ -3,39 +3,38 @@ namespace MenuSystem;
 public class Menu
 {
     private string MenuHeader { get; set; }
-    private static string _menuDivider = "------------------------";
+    private const string MenuDivider = "------------------------";
     private List<MenuItem> MenuItems { get; set; }
-
-    private MenuItem _menuItemExit = new MenuItem()
+    private EMenuLevel EMenuLevel { get; set; }
+    
+    private bool IsCustomMenu { get; set; }
+    
+    public void SetMenuItemAction(string shortcut, Func<string> action)
+    {
+        var menuItem = MenuItems.Single(m => m.Shortcut == shortcut);
+        menuItem.MenuItemAction = action;
+    }
+    
+    private readonly MenuItem _menuItemExit = new ()
     {
         Shortcut = "E",
         Title = "Exit",
     };
     
-    private MenuItem _menuItemReturn = new MenuItem()
+    private readonly MenuItem _menuItemReturn = new ()
     {
         Shortcut = "R",
         Title = "Return",
     };
     
-    private MenuItem _menuItemReturnMain = new MenuItem()
+    private readonly MenuItem _menuItemReturnMain = new ()
     {
         Shortcut = "M",
         Title = "Return to Main Menu",
     };
     
-    private EMenuLevel _menuLevel { get; set; }
-
-    public void SetMenuItemAction(string shortCut, Func<string> action)
+    public Menu(string menuHeader, List<MenuItem> menuItems, EMenuLevel menuLevel, bool isCustomMenu = false)
     {
-        var menuItem = MenuItems.Single(m => m.Shortcut == shortCut);
-        menuItem.MenuItemAction = action;
-    }
-    
-
-    public Menu(EMenuLevel menuLevel, string menuHeader, List<MenuItem> menuItems)
-    {
-
         if (string.IsNullOrWhiteSpace(menuHeader))
         {
             throw new ApplicationException("Menu header cannot be empty");
@@ -49,20 +48,20 @@ public class Menu
         }
         
         MenuItems = menuItems;
-        _menuLevel = menuLevel;
+        EMenuLevel = menuLevel;
+        IsCustomMenu = isCustomMenu;
         
-        if (_menuLevel != EMenuLevel.Main)
+        if (EMenuLevel != EMenuLevel.Main)
         {
             MenuItems.Add(_menuItemReturn);
         }
         
-        if (_menuLevel == EMenuLevel.Deep)
+        if (EMenuLevel == EMenuLevel.Deep)
         {
             MenuItems.Add(_menuItemReturnMain);
         }
         
         MenuItems.Add(_menuItemExit);
-        
     }
 
     public string Run()
@@ -77,6 +76,10 @@ public class Menu
             if (menuItem.MenuItemAction != null)
             {
                 menuReturnValue = menuItem.MenuItemAction();
+                if (IsCustomMenu)
+                {
+                    return menuReturnValue;
+                }
             }
 
             if (menuItem.Shortcut == _menuItemReturn.Shortcut)
@@ -89,8 +92,8 @@ public class Menu
                 return _menuItemExit.Shortcut;
             }
 
-            if ((menuItem.Shortcut == _menuItemReturnMain.Shortcut || menuReturnValue == _menuItemReturnMain.Shortcut)
-                && _menuLevel != EMenuLevel.Main)
+            if ((menuItem.Shortcut == _menuItemReturnMain.Shortcut || menuReturnValue == _menuItemReturnMain.Shortcut) 
+                && EMenuLevel != EMenuLevel.Main)
             {
                 return _menuItemReturnMain.Shortcut;
             }
@@ -111,7 +114,7 @@ public class Menu
             
             var userInput = Console.ReadLine();
             
-            if (string.IsNullOrWhiteSpace(userInput))
+            if (string.IsNullOrEmpty(userInput))
             {
                 Console.WriteLine("Please choose an option");
                 Console.WriteLine();
@@ -120,33 +123,28 @@ public class Menu
             {
                 userInput = userInput.ToUpper();
                 
-                foreach (var menuItem in MenuItems)
+                foreach (var menuItem in MenuItems.Where(menuItem => menuItem.Shortcut.Equals(userInput)))
                 {
-                    if (menuItem.Shortcut.ToUpper() != userInput) continue;
                     return menuItem;
                 } 
-                
-                Console.WriteLine("Please choose a valid option"); 
-                Console.WriteLine();
             }
+            
+            Console.WriteLine("Please choose a valid option");
+            Console.WriteLine();
+
         } while (true);
     }
     
-
     private void DrawMenu()
     {
+        Console.Clear();
         Console.WriteLine(MenuHeader);
-        Console.WriteLine(_menuDivider);
-
-        foreach (var t in MenuItems)
+        Console.WriteLine(MenuDivider);
+        foreach (var menuItem in MenuItems)
         {
-            Console.WriteLine(t);
+            Console.WriteLine(menuItem);
         }
-        
         Console.WriteLine();
-        
         Console.Write(">>>");
     }
-
-
 }

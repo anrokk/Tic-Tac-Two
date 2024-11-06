@@ -24,8 +24,7 @@ public class ConfigRepositoryJson : IConfigRepository
         var configJsonStr = File.ReadAllText(FileHelper.BasePath + name + FileHelper.ConfigExtension);
         var config = JsonSerializer.Deserialize<GameConfiguration>(configJsonStr);
         
-        return config;  
-        // TODO check for possible errors, scenario: maybe if there is no config with such name
+        return config ?? throw new InvalidOperationException("Configuration with such name was not found.");  
     }
 
     public void SaveConfiguration(GameConfiguration config)
