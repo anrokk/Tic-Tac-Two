@@ -1,5 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-using ConsoleApp;
+﻿using ConsoleApp;
+
+// Game starts here
 
 var menu = new Menus();
 

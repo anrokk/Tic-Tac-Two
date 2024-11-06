@@ -2,12 +2,12 @@ namespace MenuSystem;
 
 public class Menu
 {
-    private string MenuHeader { get; set; }
+    private string MenuHeader { get; }
     private const string MenuDivider = "------------------------";
-    private List<MenuItem> MenuItems { get; set; }
-    private EMenuLevel EMenuLevel { get; set; }
+    private List<MenuItem> MenuItems { get; }
+    private EMenuLevel EMenuLevel { get; }
     
-    private bool IsCustomMenu { get; set; }
+    private bool IsCustomMenu { get; }
     
     public void SetMenuItemAction(string shortcut, Func<string> action)
     {
