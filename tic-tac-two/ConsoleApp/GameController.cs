@@ -53,15 +53,55 @@ public class GameController
         {
             Visualizer.DrawBoard(gameInstance);
     
-            Console.Write("Please enter coordinates to place piece <x, y>:");
+            Console.WriteLine("Choose the coordinates <x,y>: ");
+            Console.WriteLine("Press 'm' to move the grid");
+            Console.WriteLine("Press 'e' to exit");
             var input = Console.ReadLine()!;
-            var inputSplit = input.Split(",");
-            var inputX = int.Parse(inputSplit[0]);
-            var inputY = int.Parse(inputSplit[1]);
-            gameInstance.MakeAMove(inputX, inputY);
+
+            if (GetUserInput(input, gameInstance))
+            {
+                break;
+            }
             
         } while (true);
+
+        return "Exit";
+    }
+
+    private static bool GetUserInput(string input, TicTacTwoBrain gameInstance)
+    {
+        if (input.Equals("E", StringComparison.CurrentCultureIgnoreCase))
+        {
+            Console.WriteLine("Exiting from the game...");
+            return true;
+        }
         
+        if (input.Equals("M", StringComparison.CurrentCultureIgnoreCase))
+        {
+            Console.WriteLine("Choose one of the directions to move the grid: 'up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left' or 'down-right'");
+            var inputDirection = Console.ReadLine()!;
+            gameInstance.MoveGrid(inputDirection);
+            return false;
+        }
+
+        if (input.Equals("save", StringComparison.CurrentCultureIgnoreCase))
+        {
+            GameRepository.SaveGame(gameInstance.GetGameStateJson(), gameInstance.GetGameConfigName());
+            Console.WriteLine("The game has been saved!");
+            return false;
+        }
+        
+        var inputSplit = input.Split(",");
+        if (int.TryParse(inputSplit[0], out var x) && int.TryParse(inputSplit[1], out var y))
+        {
+            gameInstance.MakeAMove(x, y);
+        }
+        else
+        {
+            Console.WriteLine("Input is invalid. Input must be a number! Please try again. <x,y>: ");
+        }
+
+        return false;
     }
 
     private static string ChooseConfiguration()
