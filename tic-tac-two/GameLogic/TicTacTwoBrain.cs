@@ -7,7 +7,7 @@ public class TicTacTwoBrain
     public TicTacTwoBrain(GameConfiguration gameConfiguration)
     {
         var gameBoard = new EGamePiece[gameConfiguration.BoardSizeWidth][];
-        for (int x = 0; x < gameBoard.Length; x++)
+        for (var x = 0; x < gameBoard.Length; x++)
         {
             gameBoard[x] = new EGamePiece[gameConfiguration.BoardSizeHeight];
         }
@@ -96,6 +96,7 @@ public class TicTacTwoBrain
             y < _gameState.GridStartY || y > _gameState.GridEndY)
         {
             Console.WriteLine("Move is outside of the grid.");
+            return false;
         }
 
         if (_gameState.GameBoard[x][y] != EGamePiece.Empty)
@@ -106,7 +107,13 @@ public class TicTacTwoBrain
         
         _gameState.GameBoard[x][y] = _gameState.NextMoveBy;
         _gameState.NextMoveBy = _gameState.NextMoveBy == EGamePiece.X ? EGamePiece.O : EGamePiece.X;
-        
+
+        if (CheckForWinner())
+        {
+            Console.WriteLine("We have a winner!");
+            ResetGame();
+        }
+
         return true;
     }
 
@@ -201,6 +208,81 @@ public class TicTacTwoBrain
         return false;
     }
 
+    private bool CheckForWinner()
+    {
+        var winCondition = _gameState.GameConfiguration.WinCondition;
+        EGamePiece[][] board = _gameState.GameBoard;
+
+        // Horizontal check
+        for (var y = 0; y < board[0].Length; y++)
+        {
+            for (var x = 0; x <= board.Length - winCondition; x++)
+            {
+                if (IsWinningLine(board, x, y, 1, 0, winCondition))
+                {
+                    return true;
+                }
+            }
+        }
+
+        // Vertical check
+        for (var x = 0; x < board.Length; x++)
+        {
+            for (var y = 0; y < board[0].Length - winCondition; y++)
+            {
+                if (IsWinningLine(board, x, y, 0, 1, winCondition))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        // Diagonal check (from left to right)
+        for (var x = 0; x <= board.Length - winCondition; x++)
+        {
+            for (var y = 0; y <= board[0].Length - winCondition; y++)
+            {
+                if (IsWinningLine(board, x, y, 1, 1, winCondition))
+                {
+                    return true;
+                }
+            }
+        }
+        
+        // Diagonal check (from right to left)
+        for (var x = winCondition - 1; x < board.Length; x++)
+        {
+            for (var y = 0; y <= board[0].Length - winCondition; y++)
+            {
+                if (IsWinningLine(board, x, y, -1, 1, winCondition))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsWinningLine(EGamePiece[][] board, int startX, int startY, int stepX, int stepY, int winCondition)
+    {
+        var firstPiece = board[startX][startY];
+        if (firstPiece == EGamePiece.Empty)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < winCondition; i++)
+        {
+            if (board[startX + i * stepX][startY + i * stepY] != firstPiece)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
     public void ResetGame()
     {
         var gameBoard = new EGamePiece[_gameState.GameConfiguration.BoardSizeWidth][];

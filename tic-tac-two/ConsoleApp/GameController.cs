@@ -31,7 +31,7 @@ public class GameController
         return MainLoop(gameInstance);
     }
     
-    private string MainLoop(TicTacTwoBrain? gameInstance = null)
+    private static string MainLoop(TicTacTwoBrain? gameInstance = null)
     {
         if (gameInstance == null)
         {
@@ -52,10 +52,9 @@ public class GameController
         do
         {
             Visualizer.DrawBoard(gameInstance);
-    
-            Console.WriteLine("Choose the coordinates <x,y>: ");
-            Console.WriteLine("Press 'm' to move the grid");
-            Console.WriteLine("Press 'e' to exit");
+            
+            DisplayGameOptions();
+            
             var input = Console.ReadLine()!;
 
             if (GetUserInput(input, gameInstance))
@@ -68,20 +67,32 @@ public class GameController
         return "Exit";
     }
 
+    private static void DisplayGameOptions()
+    {
+        Console.WriteLine("Press 'm' to move the grid");
+        Console.WriteLine("Press 'e' to exit");
+        Console.WriteLine("Write 'save' to save the game");
+        Console.WriteLine("Choose the coordinates <x,y>: ");
+        Console.WriteLine();
+        Console.Write(">>>");
+    }
+
     private static bool GetUserInput(string input, TicTacTwoBrain gameInstance)
     {
-        if (input.Equals("E", StringComparison.CurrentCultureIgnoreCase))
-        {
-            Console.WriteLine("Exiting from the game...");
-            return true;
-        }
         
         if (input.Equals("M", StringComparison.CurrentCultureIgnoreCase))
         {
             Console.WriteLine("Choose one of the directions to move the grid: 'up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left' or 'down-right'");
+            Console.Write(">>>");
             var inputDirection = Console.ReadLine()!;
             gameInstance.MoveGrid(inputDirection);
             return false;
+        }
+        
+        if (input.Equals("E", StringComparison.CurrentCultureIgnoreCase))
+        {
+            Console.WriteLine("Exiting from the game...");
+            return true;
         }
 
         if (input.Equals("save", StringComparison.CurrentCultureIgnoreCase))
@@ -108,7 +119,7 @@ public class GameController
     {
         var configMenuItems = new List<MenuItem>();
 
-        for (int i = 0; i < ConfigRepository.GetConfigurationNames().Count; i++)
+        for (var i = 0; i < ConfigRepository.GetConfigurationNames().Count; i++)
         {
             var returnValue = i.ToString();
             configMenuItems.Add(new MenuItem()
