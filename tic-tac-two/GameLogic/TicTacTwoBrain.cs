@@ -283,7 +283,7 @@ public class TicTacTwoBrain
         return true;
     }
     
-    public void ResetGame()
+    private void ResetGame()
     {
         var gameBoard = new EGamePiece[_gameState.GameConfiguration.BoardSizeWidth][];
         
