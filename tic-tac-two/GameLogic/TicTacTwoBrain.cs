@@ -95,13 +95,13 @@ public class TicTacTwoBrain
         if (x < _gameState.GridStartX || x > _gameState.GridEndX || 
             y < _gameState.GridStartY || y > _gameState.GridEndY)
         {
-            Console.WriteLine("Move is outside of the grid.");
+            Console.WriteLine("Cannot make a move outside of the grid.");
             return false;
         }
 
         if (_gameState.GameBoard[x][y] != EGamePiece.Empty)
         {
-            Console.WriteLine("This square is already occupied.");
+            Console.WriteLine("Cannot make a move into an occupied square.");
             return false;
         }
         

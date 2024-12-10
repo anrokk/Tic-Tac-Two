@@ -8,7 +8,7 @@ public class OptionsController
 
     private readonly IConfigRepository _configRepository;
 
-    public OptionsController(IConfigRepository configRepository)
+    public OptionsController (IConfigRepository configRepository)
     {
         _configRepository = configRepository;
     }
