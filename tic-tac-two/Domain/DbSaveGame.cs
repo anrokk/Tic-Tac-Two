@@ -4,15 +4,24 @@ namespace Domain;
 
 public class DbSaveGame
 {
-    public int Id { get; set; }
+    // Primary Key
+    public int Id { get; init; }
+
+    [MaxLength(128)] public string GameName { get; init; } = null!;
 
     [MaxLength(128)]
-    public string CreatedAtDateTime { get; set; } = default!;
+    public DateTime CreatedAtDateTime { get; set; } = DateTime.UtcNow;
 
     [MaxLength(10240)]
     public string State { get; set; } = null!;
+
+    [MaxLength(128)]
+    public string StateId { get; set; } = null!;
     
-    public int ConfigurationId { get; set; }
+    public int ConfigurationId { get; init; }
     
-    public DbConfiguration? Configuration { get; set; }
+    [MaxLength(128)]
+    public string ConfigurationName { get; init; } = null!;
+    
+    public DbConfiguration? Configuration { get; init; }
 }

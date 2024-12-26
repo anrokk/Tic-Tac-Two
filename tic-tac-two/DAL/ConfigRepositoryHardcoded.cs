@@ -1,4 +1,5 @@
-﻿using GameLogic;
+﻿using Domain;
+using GameLogic;
 
 namespace DAL;
 
@@ -31,6 +32,11 @@ public class ConfigRepositoryHardcoded : IConfigRepository
     public GameConfiguration GetConfigurationByName(string configName)
     {
         return GameConfigurations.Single(config => config.Name == configName);
+    }
+    
+    public List<GameConfiguration> GetAllConfigurations()
+    {
+        return GameConfigurations;
     }
 
     public void SaveConfiguration(GameConfiguration config)

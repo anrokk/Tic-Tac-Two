@@ -1,4 +1,5 @@
 using DAL;
+using Domain;
 using GameLogic;
 
 namespace ConsoleApp;

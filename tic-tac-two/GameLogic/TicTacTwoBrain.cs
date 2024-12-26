@@ -1,4 +1,6 @@
-﻿namespace GameLogic;
+﻿using Domain;
+
+namespace GameLogic;
 
 public class TicTacTwoBrain
 {
