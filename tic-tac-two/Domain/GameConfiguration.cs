@@ -1,4 +1,4 @@
-namespace GameLogic;
+namespace Domain;
 
 public class GameConfiguration
 {

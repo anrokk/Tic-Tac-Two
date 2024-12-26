@@ -2,8 +2,10 @@
 
 // Game starts here
 
-var menu = new Menus();
 
+
+
+var menu = new Menus();
 menu.MainMenu.Run();
 
 
