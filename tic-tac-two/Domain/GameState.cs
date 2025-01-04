@@ -5,17 +5,18 @@ public class GameState
     public string GameId { get; init; } = null!;
     public string GameConfigurationName { get; init; } = null!;
     public DateTime CreatedAt { get; init; }
+    public string Username { get; set; } = null!;
     public EGamePiece[][] GameBoard { get; set; } = null!;
     public EGamePiece NextMoveBy { get; set; } = EGamePiece.X;
     public GameConfiguration GameConfiguration { get; init; } = null!;
+    public int MovesMade { get; set; }
     public bool IsGameOver { get; set; }
-    
     public int GridStartX { get; set; }
     public int GridStartY { get; set; }
     public int GridEndX { get; set; }
     public int GridEndY { get; set; }
     
-    public GameState(EGamePiece[][] gameBoard, GameConfiguration gameConfiguration, string? gameId = null) 
+    public GameState(EGamePiece[][] gameBoard, GameConfiguration gameConfiguration, string? gameId = null)
     {
         GameBoard = gameBoard;
         GameConfiguration = gameConfiguration;
@@ -30,12 +31,12 @@ public class GameState
     }
     
     public GameConfiguration GetGameConfiguration() => GameConfiguration;
-
     public string GetGameConfigurationName() => GameConfigurationName;
-    
     public string GetCreatedAt() => CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
-
     public string GetGameId() => GameId;
+    public string GetUsername() => Username;
+    public void IncreaseMoves() => MovesMade++;
+    public int GetMovesMade() => MovesMade;
 
     public static GameState FromJson(string json)
     {

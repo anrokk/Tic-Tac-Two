@@ -18,50 +18,24 @@ public class TicTacTwoBrain
         CenterGrid();
     }
 
+    public EGamePiece GetCurrentGamePiece() => _gameState.NextMoveBy;
+
     public TicTacTwoBrain(GameState gameState)
     {
         _gameState = gameState;
     }
 
-    public string GetGameStateJson()
-    {
-        return _gameState.ToString();
-    }
+    public GameState GetGameState() => _gameState;
+    
+    public EGamePiece[][] GameBoard => GetBoard();
 
-    public string GetGameConfigName()
-    {
-        return _gameState.GameConfiguration.Name;
-    }
+    public int GridStartX => _gameState.GridStartX;
 
-    public EGamePiece[][] GameBoard
-    {
-        get => GetBoard();
-        private set => _gameState.GameBoard = value;
-    }
+    public int GridStartY => _gameState.GridStartY;
 
-    public int GridStartX
-    {
-        get => _gameState.GridStartX;
-        private set => _gameState.GridStartX = value;
-    }
+    public int GridEndX => _gameState.GridEndX;
 
-    public int GridStartY
-    {
-        get => _gameState.GridStartY;
-        private set => _gameState.GridStartY = value;
-    }
-
-    public int GridEndX
-    {
-        get => _gameState.GridEndX;
-        private set => _gameState.GridEndX = value;
-    }
-
-    public int GridEndY
-    {
-        get => _gameState.GridEndY;
-        private set => _gameState.GridEndY = value;
-    }
+    public int GridEndY => _gameState.GridEndY;
     
     public int DimensionX => _gameState.GameBoard.Length;
     public int DimensionY => _gameState.GameBoard.Length > 0 ? _gameState.GameBoard[0].Length : 0;
@@ -92,31 +66,57 @@ public class TicTacTwoBrain
         return copyOfBoard;
     }
 
-    public bool MakeAMove(int x, int y)
+    public bool IsGameOver()
     {
-        if (x < _gameState.GridStartX || x > _gameState.GridEndX || 
-            y < _gameState.GridStartY || y > _gameState.GridEndY)
+        return _gameState.IsGameOver;
+    }
+
+    private void EndGame(EGamePiece winner)
+    {
+        _gameState.IsGameOver = true;
+        Console.WriteLine($"{winner} has won the game! Congratulations!");
+    }
+
+    public bool MakeAMove(int x, int y, bool movePiece = false)
+    {
+        var errors =
+            MoveValidator.ValidateMakeAMove
+                (x, y, GetGameState(), _gameState.GetGameConfiguration(), movePiece);
+
+        if (errors.Count != 0)
         {
-            Console.WriteLine("Cannot make a move outside of the grid.");
             return false;
         }
 
-        if (_gameState.GameBoard[x][y] != EGamePiece.Empty)
-        {
-            Console.WriteLine("Cannot make a move into an occupied square.");
-            return false;
-        }
-        
         _gameState.GameBoard[x][y] = _gameState.NextMoveBy;
-        _gameState.NextMoveBy = _gameState.NextMoveBy == EGamePiece.X ? EGamePiece.O : EGamePiece.X;
-
-        if (CheckForWinner())
+        
+        if (!movePiece)
         {
-            Console.WriteLine("We have a winner!");
-            ResetGame();
+            _gameState.IncreaseMoves();
+            if (CheckForWinner(_gameState.NextMoveBy))
+            {
+                EndGame(_gameState.NextMoveBy);
+                return true;
+            }
+            ToggleNextMove();
         }
-
         return true;
+    }
+
+    public void MovePiece(int currentX, int currentY, int newX, int newY)
+    {
+        MoveValidator.ValidateMovePiece(currentX, currentY, GetGameState());
+
+        if (MakeAMove(newX, newY, true))
+        {
+            _gameState.GameBoard[currentX][currentY] = EGamePiece.Empty;
+            if (CheckForWinner(_gameState.NextMoveBy))
+            {
+                EndGame(_gameState.NextMoveBy);
+                return;
+            }
+            ToggleNextMove();
+        }
     }
 
     public bool MoveGrid(string direction)
@@ -128,6 +128,7 @@ public class TicTacTwoBrain
                 {
                     _gameState.GridStartY--;
                     _gameState.GridEndY--;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
@@ -137,6 +138,7 @@ public class TicTacTwoBrain
                 {
                     _gameState.GridStartY++;
                     _gameState.GridEndY++;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
@@ -146,6 +148,7 @@ public class TicTacTwoBrain
                 {
                     _gameState.GridStartX--;
                     _gameState.GridEndX--;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
@@ -155,8 +158,8 @@ public class TicTacTwoBrain
                 {
                     _gameState.GridStartX++;
                     _gameState.GridEndX++;
+                    ToggleNextMove();
                     return true;
-                    
                 }
                 break;
             
@@ -167,6 +170,7 @@ public class TicTacTwoBrain
                     _gameState.GridEndY--;
                     _gameState.GridStartX--;
                     _gameState.GridEndX--;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
@@ -178,6 +182,7 @@ public class TicTacTwoBrain
                     _gameState.GridEndY--;
                     _gameState.GridStartX++;
                     _gameState.GridEndX++;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
@@ -188,6 +193,7 @@ public class TicTacTwoBrain
                     _gameState.GridEndY++;
                     _gameState.GridStartX--;
                     _gameState.GridEndX--;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
@@ -199,28 +205,28 @@ public class TicTacTwoBrain
                     _gameState.GridEndY++;
                     _gameState.GridStartX++;
                     _gameState.GridEndX++;
+                    ToggleNextMove();
                     return true;
                 }
                 break;
             
             default:
-                Console.WriteLine("");
+                Console.WriteLine("Direction is invalid.");
                 break;
         }
         return false;
     }
 
-    private bool CheckForWinner()
+    private bool CheckForWinner(EGamePiece gamePiece)
     {
         var winCondition = _gameState.GameConfiguration.WinCondition;
-        EGamePiece[][] board = _gameState.GameBoard;
 
         // Horizontal check
-        for (var y = 0; y < board[0].Length; y++)
+        for (var y = GridStartY; y < GridEndY; y++)
         {
-            for (var x = 0; x <= board.Length - winCondition; x++)
+            for (var x = GridStartX; x <= GridEndX - winCondition + 1; x++)
             {
-                if (IsWinningLine(board, x, y, 1, 0, winCondition))
+                if (IsWinningLine(gamePiece, x, y, 1, 0, winCondition))
                 {
                     return true;
                 }
@@ -228,35 +234,35 @@ public class TicTacTwoBrain
         }
 
         // Vertical check
-        for (var x = 0; x < board.Length; x++)
+        for (var x = GridStartX; x <= GridEndX; x++)
         {
-            for (var y = 0; y < board[0].Length - winCondition; y++)
+            for (var y = GridStartY; y <= GridEndY - winCondition + 1; y++)
             {
-                if (IsWinningLine(board, x, y, 0, 1, winCondition))
+                if (IsWinningLine(gamePiece, x, y, 0, 1, winCondition))
                 {
                     return true;
                 }
             }
         }
         
-        // Diagonal check (from left to right)
-        for (var x = 0; x <= board.Length - winCondition; x++)
+        // Diagonal check (from top-left to bottom-right)
+        for (var y = GridStartY; y <= GridEndY - winCondition + 1; y++)
         {
-            for (var y = 0; y <= board[0].Length - winCondition; y++)
+            for (var x = GridStartX; x <= GridEndX - winCondition + 1; x++)
             {
-                if (IsWinningLine(board, x, y, 1, 1, winCondition))
+                if (IsWinningLine(gamePiece, x, y, 1, 1, winCondition))
                 {
                     return true;
                 }
             }
         }
         
-        // Diagonal check (from right to left)
-        for (var x = winCondition - 1; x < board.Length; x++)
+        // Diagonal check (bottom-left to top-right
+        for (var y = GridStartY + winCondition - 1; y <= GridEndY; y++)
         {
-            for (var y = 0; y <= board[0].Length - winCondition; y++)
+            for (var x = GridStartX; x <= GridEndX - winCondition + 1; x++)
             {
-                if (IsWinningLine(board, x, y, -1, 1, winCondition))
+                if (IsWinningLine(gamePiece, x, y, 1, -1, winCondition))
                 {
                     return true;
                 }
@@ -266,36 +272,22 @@ public class TicTacTwoBrain
         return false;
     }
 
-    private static bool IsWinningLine(EGamePiece[][] board, int startX, int startY, int stepX, int stepY, int winCondition)
+    private bool IsWinningLine(EGamePiece gamePiece, int startX, int startY, int stepX, int stepY, int winCondition)
     {
-        var firstPiece = board[startX][startY];
-        if (firstPiece == EGamePiece.Empty)
-        {
-            return false;
-        }
-
         for (var i = 0; i < winCondition; i++)
         {
-            if (board[startX + i * stepX][startY + i * stepY] != firstPiece)
+            var x = startX + i * stepX;
+            var y = startY + i * stepY;
+            if (_gameState.GameBoard[x][y] != gamePiece)
             {
                 return false;
             }
         }
-
         return true;
     }
     
-    private void ResetGame()
+    private void ToggleNextMove()
     {
-        var gameBoard = new EGamePiece[_gameState.GameConfiguration.BoardSizeWidth][];
-        
-        for (var x = 0; x < gameBoard.Length; x++)
-        {
-            gameBoard[x] = new EGamePiece[_gameState.GameConfiguration.BoardSizeHeight];
-        }
-        
-        _gameState.GameBoard = gameBoard;
-        _gameState.NextMoveBy = EGamePiece.X;
-        CenterGrid();
+        _gameState.NextMoveBy = _gameState.NextMoveBy == EGamePiece.X ? EGamePiece.O : EGamePiece.X;
     }
 }

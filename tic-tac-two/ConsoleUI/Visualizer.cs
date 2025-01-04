@@ -1,4 +1,5 @@
-﻿using GameLogic;
+﻿using Domain;
+using GameLogic;
 
 namespace ConsoleUI;
 
