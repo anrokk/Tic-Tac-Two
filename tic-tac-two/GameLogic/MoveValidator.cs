@@ -36,4 +36,84 @@ public static class MoveValidator
         Console.WriteLine($"Your piece is not in that place ({x}, {y}).");
         return "Your piece is not in that place.";
     }
+
+    public static bool CheckMoveInput(TicTacTwoBrain gameInstance, string[] inputSplit)
+    {
+        if (inputSplit.Length != 2)
+        {
+            Console.WriteLine("The input should be in the format <x,y>.");
+        }
+
+        if (!int.TryParse(inputSplit[0], out var inputX))
+        {
+            Console.WriteLine($"{inputX} is not a valid number. Format should be <x,y>.");
+        }
+
+        if (!int.TryParse(inputSplit[1], out var inputY))
+        {
+            Console.WriteLine($"{inputY} is not a valid number. Format should be <x,y>.");
+        }
+
+        if (inputX < 0 || inputX > gameInstance.DimensionX)
+        {
+            Console.WriteLine($"Value {inputX} is out of range for X. Format should be <x,y>.");
+        }
+
+        if (inputY < 0 || inputY > gameInstance.DimensionY)
+        {
+            Console.WriteLine($"Value {inputY} is out of range for Y. Format should be <x,y>.");
+        }
+
+        gameInstance.MakeAMove(inputX, inputY);
+
+        return false;
+    }
+    
+    public static bool CheckMovePieceInput(TicTacTwoBrain gameInstance, string[] inputCoordinates)
+    {
+        if (inputCoordinates.Length != 4)
+        {
+            Console.WriteLine("The input format is x,y x,y. Try again '<x,y> <x,y>': ");
+            return false;
+        }
+        
+        if (!int.TryParse(inputCoordinates[0], out var currentX))
+        {
+            Console.WriteLine($"'{currentX}' seems not to be a number. Try again <x,y>: ");
+            return false;
+        }
+        
+        if (!int.TryParse(inputCoordinates[1], out var currentY))
+        {
+            Console.WriteLine($"'{currentY}' seems not to be a number. Try again <x,y>: ");
+            return false;
+        }
+        
+        if (!int.TryParse(inputCoordinates[2], out var newX))
+        {
+            Console.WriteLine($"'{newX}' seems not to be a number. Try again <x,y>: ");
+            return false;
+        }
+        
+        if (!int.TryParse(inputCoordinates[3], out var newY))
+        {
+            Console.WriteLine($"'{newY}' seems not to be a number. Try again <x,y>: ");
+            return false;
+        }
+        
+        if (newX < 0 || newX > gameInstance.DimensionX)
+        {
+            Console.WriteLine($"Value '{newX}' is out of range for X. Try again <x,y>: ");
+            return false;
+        }
+        
+        if (newY < 0 || newY > gameInstance.DimensionY)
+        {
+            Console.WriteLine($"Value '{newY}' is out of range for Y. Try again <x,y>: ");
+            return false;
+        }
+        
+        gameInstance.MovePiece(currentX, currentY, newX, newY);
+        return false;
+    } 
 }
