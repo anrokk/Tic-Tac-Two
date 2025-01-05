@@ -8,11 +8,10 @@ public class Menus
     private Menu OptionsMenu { get; }
     public Menu MainMenu { get; }
 
-    public Menus()
+    public Menus(IConfigRepository configRepository, IGameRepository gameRepository, string username)
     {
-        IConfigRepository configRepository = new ConfigRepositoryJson();
-        var optionsController = new OptionsController(configRepository);
-        var gameController = new GameController();
+        var optionsController = new OptionsController(configRepository, username);
+        var gameController = new GameController(configRepository, gameRepository, username);
         
         OptionsMenu =
             new Menu("Options", [

@@ -5,11 +5,8 @@ using ConsoleUI;
 
 namespace ConsoleApp;
 
-public class GameController
+public class GameController(IConfigRepository configRepository, IGameRepository gameRepository, string username)
 {
-
-    private static readonly IConfigRepository ConfigRepository = new ConfigRepositoryJson();
-    private static readonly IGameRepository GameRepository = new GameRepositoryJson();
     
     public string StartNewGame()
     {
@@ -18,14 +15,8 @@ public class GameController
 
     public string LoadSavedGame()
     {
-        var chosenGameShortcut = ChooseSavedGame();
-
-        if (!int.TryParse(chosenGameShortcut, out var gameNo))
-        {
-            return chosenGameShortcut;
-        }
-        
-        var chosenGame = GameRepository.LoadGame(GameRepository.GetGameNames()[gameNo]);
+        var chosenGameId = ChooseSavedGame();
+        var chosenGame = gameRepository.LoadGame(chosenGameId, username);
         var gameInstance = new TicTacTwoBrain(chosenGame);
         
         return MainLoop(gameInstance);

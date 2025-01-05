@@ -1,56 +1,95 @@
 using System.Text.Json;
 using Domain;
-using GameLogic;
 
 namespace DAL;
 
 public class ConfigRepositoryJson : IConfigRepository
+
 {
-    public List<string> GetConfigurationNames()
+    public List<string> GetConfigurationNames(string username)
     {
-        CheckAndCreateConfig();
-        
-        return Directory
-            .GetFiles(FileHelper.BasePath, "*" + FileHelper.ConfigExtension)
-            .Select(fullFileName => 
-                Path.GetFileNameWithoutExtension(
-                    Path.GetFileNameWithoutExtension(fullFileName)
-                )
-            )
+        CheckAndCreateConfig(username);
+        var configFiles = Directory.GetFiles(FileHelper.BasePath, $"*_{username}{FileHelper.ConfigExtension}").ToList();
+
+        return configFiles.Select(Path.GetFileNameWithoutExtension)
+            .Select(name => name!.Split('_')[0])
             .ToList();
     }
 
-    public GameConfiguration GetConfigurationByName(string name)
+    public GameConfiguration GetConfiguration(string name, string username)
     {
-        var configJsonStr = File.ReadAllText(FileHelper.BasePath + name + FileHelper.ConfigExtension);
+        var filePath = FileHelper.BasePath + name + "_" + username + FileHelper.ConfigExtension;
+
+        if (!File.Exists(filePath))
+        {
+            throw new InvalidOperationException($"Configuration {name} for user {username} not found.");
+        }
+
+        var configJsonStr = File.ReadAllText(filePath);
         var config = JsonSerializer.Deserialize<GameConfiguration>(configJsonStr);
-        
-        return config ?? throw new InvalidOperationException("Configuration with such name was not found.");  
+        return config ?? throw new InvalidOperationException("Configuration not found.");
     }
 
-    public void SaveConfiguration(GameConfiguration config)
+    public List<GameConfiguration> GetAllConfigurations(string username)
     {
-        var optionJsonStr = JsonSerializer.Serialize(config);
-        File.WriteAllText(FileHelper.BasePath + config.Name + FileHelper.ConfigExtension, optionJsonStr);
-    }
-    
+        CheckAndCreateConfig(username);
+        var configFiles = Directory.GetFiles(FileHelper.BasePath, $"*_{username}{FileHelper.ConfigExtension}").ToList();
 
-    private static void CheckAndCreateConfig()
+        return configFiles
+            .Select(configFile =>
+            {
+                try
+                {
+                    var jsonContent = File.ReadAllText(configFile);
+                    return JsonSerializer.Deserialize<GameConfiguration>(jsonContent);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to deserialize file {configFile}: {ex.Message}");
+                    return null;
+                }
+            })
+            .Where(config => config != null && config.Username == username)
+            .ToList()!;
+    }
+
+    public void SaveConfiguration(GameConfiguration config, string username)
+    {
+        config.Username = username;
+
+        var filePath = FileHelper.BasePath + config.Name + "_" + username + FileHelper.ConfigExtension;
+        var optionJsonStr = JsonSerializer.Serialize(config);
+        File.WriteAllText(filePath, optionJsonStr);
+    }
+
+    public void DeleteConfiguration(GameConfiguration config, string username)
+    {
+        var filePath = FileHelper.BasePath + config.Name + "_" + username + FileHelper.ConfigExtension;
+
+        if (!File.Exists(filePath))
+        {
+            throw new InvalidOperationException($"Configuration {config.Name} for user {username} not found.");
+        }
+
+        File.Delete(filePath);
+    }
+
+    private static void CheckAndCreateConfig(string username)
     {
         if (!Directory.Exists(FileHelper.BasePath))
         {
             Directory.CreateDirectory(FileHelper.BasePath);
         }
-        
-        var hardcodedRepo = new ConfigRepositoryHardcoded();
-        var optionNames = hardcodedRepo.GetConfigurationNames();
-        
+
+        var hardCodedRepo = new ConfigRepositoryHardcoded();
+        var optionNames = hardCodedRepo.GetConfigurationNames(username);
+
         foreach (var optionName in optionNames)
         {
-            var gameOption = hardcodedRepo.GetConfigurationByName(optionName);
+            var gameOption = hardCodedRepo.GetConfiguration(optionName, username);
+            gameOption.Username = username; // Associate the username with the configuration
             var optionJsonStr = JsonSerializer.Serialize(gameOption);
-            File.WriteAllText(FileHelper.BasePath + gameOption.Name + FileHelper.ConfigExtension, optionJsonStr);
+            File.WriteAllText(FileHelper.BasePath + gameOption.Name + "_" + username + FileHelper.ConfigExtension, optionJsonStr);
         }
-        
     }
 }

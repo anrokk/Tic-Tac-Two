@@ -8,36 +8,63 @@ public class GameRepositoryJson : IGameRepository
 {
 
     private string? _currentGameFile;
-    
-    public void SaveGame(string jsonStateString, string gameConfigName)
+
+    public void SaveGame(GameState gameState, string username)
     {
-        var fileName = FileHelper.BasePath +
-                       gameConfigName + " " +
-                       DateTime.Now.ToString("yyyy-MM-dd--HH--mm--ss") +
-                       FileHelper.GameExtension;
-        File.WriteAllText(fileName, jsonStateString);
+        gameState.Username = username;
+        var fileName = FileHelper.BasePath + gameState.GetGameId() + "_" + username + FileHelper.GameExtension;
+        File.WriteAllText(fileName, gameState.ToString());
         _currentGameFile = fileName;
     }
 
-    public List<string> GetGameNames()
+    public List<string> GetAllGameNames(string username)
     {
-        var gameFiles = Directory
-            .GetFiles(FileHelper.BasePath, 
-                "*" + 
-                FileHelper.ConfigExtension).ToList();
+        var gameFiles = Directory.GetFiles(FileHelper.BasePath, $"*_{username}{FileHelper.GameExtension}").ToList();
 
-        return gameFiles.Select(Path.GetFileNameWithoutExtension).Select(Path.GetFileNameWithoutExtension).ToList()!;
+        return gameFiles.Select(filePath =>
+        {
+            var gameJsonStr = File.ReadAllText(filePath);
+            var game = JsonSerializer.Deserialize<GameState>(gameJsonStr);
+            return $"{game?.GetGameConfigurationName()} {game?.GetCreatedAt()}";
+        }).ToList();
+    }
+    
+    public List<GameState> GetAllGameStates(string username)
+    {
+        var gameFiles = Directory.GetFiles(FileHelper.BasePath, $"*_{username}{FileHelper.GameExtension}").ToList();
+
+        return gameFiles
+            .Select(file => JsonSerializer.Deserialize<GameState>(File.ReadAllText(file)))
+            .Where(game => game != null && game.Username == username)
+            .ToList()!;
     }
 
-    public GameState LoadGame(string name)
+    public GameState LoadGame(string gameId, string username)
     {
-        var filePath = FileHelper.BasePath + name + FileHelper.GameExtension;
-        var gameJsonStr = File.ReadAllText(FileHelper.BasePath + name + FileHelper.GameExtension);
+        var filePath = FileHelper.BasePath + gameId + "_" + username + FileHelper.GameExtension;
+
+        if (!File.Exists(filePath))
+        {
+            throw new InvalidOperationException($"Game with ID {gameId} for user {username} not found.");
+        }
+
+        var gameJsonStr = File.ReadAllText(filePath);
         var game = JsonSerializer.Deserialize<GameState>(gameJsonStr);
 
         _currentGameFile = filePath;
+        return game ?? throw new InvalidOperationException("Failed to load game state.");
+    }
 
-        return game ?? throw new InvalidOperationException("Game was not found");
+    public void DeleteGame(string gameId, string username)
+    {
+        var filePath = FileHelper.BasePath + gameId + "_" + username + FileHelper.GameExtension;
+
+        if (!File.Exists(filePath))
+        {
+            throw new InvalidOperationException($"Game with ID {gameId} for user {username} not found.");
+        }
+
+        File.Delete(filePath);
     }
     
 }

@@ -22,26 +22,31 @@ public class ConfigRepositoryHardcoded : IConfigRepository
         }
     ];
 
-    public List<string> GetConfigurationNames()
+    public List<string> GetConfigurationNames(string username)
     {
         return GameConfigurations
             .Select(config => config.Name)
             .ToList();
     }
 
-    public GameConfiguration GetConfigurationByName(string configName)
+    public GameConfiguration GetConfiguration(string configName, string username)
     {
         return GameConfigurations.Single(config => config.Name == configName);
     }
-    
-    public List<GameConfiguration> GetAllConfigurations()
+
+    public List<GameConfiguration> GetAllConfigurations(string username)
     {
         return GameConfigurations;
     }
 
-    public void SaveConfiguration(GameConfiguration config)
+    public void SaveConfiguration(GameConfiguration config, string username)
     {
         GameConfigurations.Add(config);
+    }
+
+    public void DeleteConfiguration(GameConfiguration config, string username)
+    {
+        GameConfigurations.Remove(config);
     }
     
 }

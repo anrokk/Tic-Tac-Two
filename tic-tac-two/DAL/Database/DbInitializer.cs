@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DAL.Database;
 
-public class DbInitializer
+public class DatabaseInitializer
 {
     private readonly AppDbContext _dbContext;
-    private readonly string _connectionString = $"Data Source={FileHelper.BasePath + "app.db"}";
+    private static readonly string DbFilePath = FileHelper.BasePath + "app.db";
+    private readonly string _connectionString = $"Data Source={DbFilePath}";
 
-    public DbInitializer()
+    public DatabaseInitializer()
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
         optionsBuilder.UseSqlite(_connectionString);
@@ -21,16 +22,18 @@ public class DbInitializer
         return _connectionString;
     }
 
+    
     public void Initialize()
     {
         try
         {
             _dbContext.Database.Migrate();
+
             EnsureDefaultConfigurations();
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Database initialization failed: {e.Message}");
+            Console.WriteLine($"Database initialization failed: {ex.Message}");
             throw;
         }
     }
@@ -41,20 +44,20 @@ public class DbInitializer
         {
             if (_dbContext.DbConfiguration.Any()) return;
 
-            var defaultConfigurations = new List<DbConfiguration>
+            var defaultConfigs = new List<DbConfiguration>
             {
-                new DbConfiguration()
+                new DbConfiguration
                 {
-                    ConfigurationName = "Classical",
+                    ConfigurationName = "Classical Tic-Tac-Two",
                     BoardSizeWidth = 5,
                     BoardSizeHeight = 5,
                     GridSizeWidth = 3,
                     GridSizeHeight = 3,
                     WinCondition = 3,
-                    MovePieceAfterNMoves = 1
+                    MovePieceAfterNMoves = 3,
+                    Username = null
                 },
-
-                new DbConfiguration()
+                new DbConfiguration
                 {
                     ConfigurationName = "Big Board",
                     BoardSizeWidth = 10,
@@ -62,25 +65,22 @@ public class DbInitializer
                     GridSizeWidth = 5,
                     GridSizeHeight = 5,
                     WinCondition = 4,
-                    MovePieceAfterNMoves = 3
+                    MovePieceAfterNMoves = 5,
+                    Username = null
                 }
             };
 
-            _dbContext.DbConfiguration.AddRange(defaultConfigurations);
+            _dbContext.DbConfiguration.AddRange(defaultConfigs);
             _dbContext.SaveChanges();
-            Console.WriteLine("Default configurations added successfully.");
+            Console.WriteLine("Default configurations seeded successfully.");
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while adding default configurations: {e.Message}");
+            Console.WriteLine($"Error seeding default configurations: {ex.Message}");
             throw;
         }
     }
-
-    public AppDbContext GetDbContext()
-    {
-        return _dbContext;
-    }
-
+    
+    public AppDbContext GetDbContext() => _dbContext;
     public void Dispose() => _dbContext.Dispose();
 }

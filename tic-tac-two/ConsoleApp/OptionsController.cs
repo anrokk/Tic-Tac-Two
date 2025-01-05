@@ -4,16 +4,8 @@ using GameLogic;
 
 namespace ConsoleApp;
 
-public class OptionsController
+public class OptionsController(IConfigRepository configRepo, string username)
 {
-
-    private readonly IConfigRepository _configRepository;
-
-    public OptionsController (IConfigRepository configRepository)
-    {
-        _configRepository = configRepository;
-    }
-    
     public string NewConfiguration()
     {
         var configurationName = AskConfigurationName();
@@ -37,7 +29,7 @@ public class OptionsController
             MovePieceAfterNMoves = moveAfterNPieces, 
         };
 
-        _configRepository.SaveConfiguration(newConfiguration);
+        configRepo.SaveConfiguration(newConfiguration, username);
         
         return "";
     }

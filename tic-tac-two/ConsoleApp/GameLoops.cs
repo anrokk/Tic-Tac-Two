@@ -28,9 +28,52 @@ public class GameLoops
 
             if (userInput.StartsWith("s", StringComparison.CurrentCultureIgnoreCase))
             {
-                //TODO
+                gameRepository.SaveGame(gameInstance.GetGameState(), username);
+                Console.WriteLine("Game has been saved!");
+                continue;
+
 
             }
-        } while (true);
+
+            while (true) ;
+        }
+    }
+
+    private static bool GetUserMove(string input, TicTacTwoBrain gameInstance)
+    {
+        if (input.Equals("mg", StringComparison.CurrentCultureIgnoreCase))
+        {
+            if (gameInstance.GetGameState().GetMovesMade() / 2 < 
+                gameInstance.GetGameState().GetGameConfiguration().MovePieceAfterNMoves)
+            {
+                Console.WriteLine($"You cannot move the grid yet. {gameInstance.GetGameState().GetGameConfiguration().MovePieceAfterNMoves} moves must be made");
+                return false;
+            }
+            
+            Console.Write("Choose a direction to move the grid | 'up', 'down', 'left', 'right', 'up-left', 'up-right', 'down-left' or 'down-right': ");
+            var direction = Console.ReadLine()!;
+
+            gameInstance.MoveGrid(direction);
+
+            return false;
+        }
+
+        if (input.Equals("mp", StringComparison.CurrentCultureIgnoreCase))
+        {
+            if (gameInstance.GetGameState().GetMovesMade() / 2 <
+                gameInstance.GetGameState().GetGameConfiguration().MovePieceAfterNMoves)
+            {
+                Console.WriteLine($"Cannot move a piece yet! {gameInstance.GetGameState().GetGameConfiguration().MovePieceAfterNMoves} moves must be made");
+            }
+            Console.Write("Choose the piece coordinates and new coordinates: <x,y> <x,y>");
+            var userInput = Console.ReadLine()!;
+            var inputCoordinates = userInput.Replace(" ", ",").Split(",");
+
+            return MoveValidator.CheckMovePieceInput(gameInstance, inputCoordinates);
+        }
+        
+        var inputSplit = input.Split(",");
+
+        return MoveValidator.CheckMoveInput(gameInstance, inputSplit);
     }
 }

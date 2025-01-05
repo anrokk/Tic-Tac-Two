@@ -14,7 +14,6 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
             .EnableDetailedErrors()
             .EnableSensitiveDataLogging()
             .Options;
-
         return new AppDbContext(contextOptions);
     }
 }

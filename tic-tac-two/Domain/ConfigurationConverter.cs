@@ -2,31 +2,31 @@ namespace Domain;
 
 public static class ConfigurationConverter
 {
-    public static DbConfiguration ToTicTacTwoConfiguration(GameConfiguration gameConfiguration)
+    public static DbConfiguration ToTicTacTwoConfiguration(GameConfiguration gameConfig)
     {
         return new DbConfiguration
         {
-            ConfigurationName = gameConfiguration.Name,
-            BoardSizeWidth = gameConfiguration.BoardSizeWidth,
-            BoardSizeHeight = gameConfiguration.BoardSizeHeight,
-            GridSizeWidth = gameConfiguration.GridSizeWidth,
-            GridSizeHeight = gameConfiguration.GridSizeHeight,
-            WinCondition = gameConfiguration.WinCondition,
-            MovePieceAfterNMoves = gameConfiguration.MovePieceAfterNMoves
+            ConfigurationName = gameConfig.Name,
+            BoardSizeWidth = gameConfig.BoardSizeWidth,
+            BoardSizeHeight = gameConfig.BoardSizeHeight,
+            GridSizeWidth = gameConfig.GridSizeWidth,
+            GridSizeHeight = gameConfig.GridSizeHeight,
+            WinCondition = gameConfig.WinCondition,
+            MovePieceAfterNMoves = gameConfig.MovePieceAfterNMoves
         };
     }
-    
-    public static GameConfiguration ToGameConfiguration(DbConfiguration dbConfiguration)
+
+    public static GameConfiguration ToGameConfiguration(DbConfiguration dbConfig)
     {
         return new GameConfiguration
         {
-            Name = dbConfiguration.ConfigurationName,
-            BoardSizeWidth = dbConfiguration.BoardSizeWidth,
-            BoardSizeHeight = dbConfiguration.BoardSizeHeight,
-            GridSizeWidth = dbConfiguration.GridSizeWidth,
-            GridSizeHeight = dbConfiguration.GridSizeHeight,
-            WinCondition = dbConfiguration.WinCondition,
-            MovePieceAfterNMoves = dbConfiguration.MovePieceAfterNMoves
+            Name = dbConfig.ConfigurationName,
+            BoardSizeWidth = dbConfig.BoardSizeWidth,
+            BoardSizeHeight = dbConfig.BoardSizeHeight,
+            GridSizeWidth = dbConfig.GridSizeWidth,
+            GridSizeHeight = dbConfig.GridSizeHeight,
+            WinCondition = dbConfig.WinCondition,
+            MovePieceAfterNMoves = dbConfig.MovePieceAfterNMoves
         };
     }
 }
