@@ -5,13 +5,18 @@ namespace ConsoleUI;
 
 public static class Visualizer
 {
-    private const string GridBackgroundColor = "\u001b[47m";
-    
-    private const string PieceOColor = "\u001b[34m";
-    
-    private const string PieceXColor = "\u001b[31m";
-    
-    private const string ResetToNormal = "\u001b[0m";
+    public static string DrawGamePiece(EGamePiece piece)
+    {
+        return piece switch
+        {
+            EGamePiece.O => "O",
+            EGamePiece.X => "X",
+            _ => " "
+        };
+    }
+
+    private const string Reset = "\u001b[0m";
+    private const string Highlight = "\u001b[42m";
     
     public static void DrawBoard(TicTacTwoBrain gameInstance)
     {
@@ -33,17 +38,10 @@ public static class Visualizer
             
             for (var x = 0; x < gameInstance.DimensionX; x++)
             {
-
-                var moveInGrid = x >= gridStartX && x <= gridEndX && y >= gridStartY && y <= gridEndY;
-
-                if (moveInGrid)
+                if (x >= gridStartX && x <= gridEndX && y >= gridStartY && y <= gridEndY)
                 {
-                    Console.Write(GridBackgroundColor +
-                                  " " +
-                                  DrawGamePiece(gameInstance.GameBoard[x][y]) +
-                                  " " +
-                                  ResetToNormal
-                    );
+                    Console.Write(Highlight + " " + 
+                                  DrawGamePiece(gameInstance.GameBoard[x][y]) + " " + Reset);
                 }
                 
                 else
@@ -69,18 +67,9 @@ public static class Visualizer
                     {
                         Console.Write("+");
                     }
-                } 
+                }
                 Console.WriteLine();
             }
         }
-    }
-    private static string DrawGamePiece(EGamePiece piece)
-    {
-        return piece switch
-        {
-            EGamePiece.O => PieceOColor + "O" + ResetToNormal,
-            EGamePiece.X => PieceXColor + "X" + ResetToNormal,
-            _ => " "
-        };
     }
 }

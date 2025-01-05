@@ -31,12 +31,11 @@ public class GameLoops
                 gameRepository.SaveGame(gameInstance.GetGameState(), username);
                 Console.WriteLine("Game has been saved!");
                 continue;
-
-
             }
 
-            while (true) ;
+            if (GetUserMove(userInput, gameInstance)) break;
         }
+        while (true) ;
     }
 
     private static bool GetUserMove(string input, TicTacTwoBrain gameInstance)

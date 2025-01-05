@@ -5,22 +5,42 @@ using Microsoft.EntityFrameworkCore;
 
 // Game starts here
 
-var connectionString = $"Data Source={FileHelper.BasePath}app.db";
+var databaseInitializer = new DatabaseInitializer();
+databaseInitializer.Initialize();
 
-var contextOptions = new DbContextOptionsBuilder<AppDbContext>()
-    .UseSqlite(connectionString)
-    .EnableDetailedErrors()
-    .EnableSensitiveDataLogging()
-    .Options;
+var dbContext = databaseInitializer.GetDbContext();
 
-using var context = new AppDbContext(contextOptions);
-
-var savedGamesCount = context.DbSaveGame.Count();
-
-Console.WriteLine($"Games in db {savedGamesCount}");
-
-var menu = new Menus();
+IConfigRepository configRepository = new ConfigRepositoryDb(dbContext);
+IGameRepository gameRepository = new GameRepositoryDb(dbContext);
+ 
+// JSON APPROACH
+ 
+// IConfigRepository configRepository = new ConfigRepositoryJson();
+// IGameRepository gameRepository = new GameRepositoryJson();
+ 
+var username = AskForUsername();
+var menu = new Menus(configRepository, gameRepository, username);
+Thread.Sleep(1000);
 menu.MainMenu.Run();
+
+return;
+
+string AskForUsername()
+{
+    Console.WriteLine("Welcome to Tic-Tac-Two!");
+    Console.Write("Choose an username: ");
+    var name = Console.ReadLine();
+
+    while (string.IsNullOrWhiteSpace(name))
+    {
+        Console.WriteLine("Username cannot be empty. Please try again.");
+        Console.Write("Choose an username: ");
+        name = Console.ReadLine();
+    }
+    Console.Clear();
+    Console.WriteLine($"Hello, {name}! Let's play Tic-Tac-Two!");
+    return name;
+}
 
 
 
