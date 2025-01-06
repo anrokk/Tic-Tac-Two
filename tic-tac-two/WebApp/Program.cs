@@ -1,25 +1,80 @@
+using DAL;
+using DAL.Database;
+using Domain;
+using Microsoft.EntityFrameworkCore;
+using WebApp;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+//"db" for database access, leave empty for JSON access
+InitializeDal("db");
+
+SetupServices();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+SetupAndRunApp();
+
+return;
+
+
+
+void InitializeDal(string? dbOrJson = null)
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    if (dbOrJson == "db")
+    {
+        var databaseInitializer = new DatabaseInitializer();
+        databaseInitializer.Initialize();
+        builder.Services.AddScoped<IConfigRepository, ConfigRepositoryDb>();
+        builder.Services.AddScoped<IGameRepository, GameRepositoryDb>();
+        builder.Services.AddSingleton(databaseInitializer);
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlite(databaseInitializer.GetConnectionString()));
+    }
+    else
+    {
+        builder.Services.AddScoped<IConfigRepository, ConfigRepositoryJson>();
+        builder.Services.AddScoped<IGameRepository, GameRepositoryJson>();    
+    }
 }
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+void SetupServices()
+{
+    builder.Services.AddScoped<GameService>();
+    builder.Services.AddScoped<GameContext>();
 
-app.UseRouting();
 
-app.UseAuthorization();
+    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Services.AddRazorPages();
 
-app.MapRazorPages();
+    builder.Services.AddDistributedMemoryCache(); // Required for session state
+    builder.Services.AddSession(options =>
+    {
+        options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
+        options.Cookie.HttpOnly = true; // Prevent client-side access to session cookie
+        options.Cookie.IsEssential = true; // Ensure the cookie is created even without consent
+    });
+}
 
-app.Run();
+void SetupAndRunApp()
+{
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.MapStaticAssets();
+
+    app.UseSession();
+    app.UseRouting();
+
+    app.UseAuthorization();
+
+    app.MapRazorPages().WithStaticAssets();
+
+    app.Run();
+}

@@ -1,0 +1,18 @@
+@page "/options"
+@model WebApp.Pages.Options
+
+@{
+    ViewData["Title"] = "Options";
+}
+
+<div class="container text-center">
+    <h1>TIC-TAC-TWO | Options</h1>
+    <div class="col">
+        <a class="btn btn-primary" asp-page="/Configurations/Create" role="button">Create a New Configuration</a>
+        <br/>
+        <a class="btn btn-primary" asp-page="/Configurations/Index" role="button">Manage Configurations</a>
+        <br/>
+        <a class="btn btn-primary" asp-page="/Games/Index" role="button">Manage Saved Games</a>
+    </div>
+</div>
+

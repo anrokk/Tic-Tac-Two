@@ -5,14 +5,30 @@ namespace WebApp.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly ILogger<IndexModel> _logger;
+    [BindProperty]
+    public string? Username { get; set; }
+    public string ErrorMessage { get; set; } = null!;
 
-    public IndexModel(ILogger<IndexModel> logger)
+    public IActionResult OnGet(string? error)
     {
-        _logger = logger;
+        if (error != null)
+        {
+            ErrorMessage = error;
+        }
+        return Page();
     }
 
-    public void OnGet()
+    public IActionResult OnPost()
     {
+        if (string.IsNullOrWhiteSpace(Username))
+        {
+            ErrorMessage = "Username is required";
+            return Page();
+        }
+
+        Username = Username.Trim();
+        HttpContext.Session.SetString("Username", Username);
+
+        return RedirectToPage("/home");
     }
 }

@@ -1,0 +1,12 @@
+@page
+@model WebApp.Pages.Test.Index
+
+@{
+    ViewData["Title"] = "TestPage";
+}
+
+<form method="post">
+    <input asp-for="Name"/>
+</form>
+
+<p>My name is @Model.Name</p>
