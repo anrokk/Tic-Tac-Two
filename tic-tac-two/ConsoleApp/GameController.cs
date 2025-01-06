@@ -48,13 +48,13 @@ public class GameController(IConfigRepository configRepository, IGameRepository 
             }
             case "PvsAi":
             {
-                //TODO
-                return null;
+                GameLoops.PlayerAgainstAi(gameInstance, gameRepository, username);
+                break;
             }
             default:
             {
-                //TODO
-                return null;
+                GameLoops.AiAgainstAi(gameInstance, gameRepository, username);
+                break;
             }
         }
         return "Exit";
@@ -105,19 +105,19 @@ public class GameController(IConfigRepository configRepository, IGameRepository 
     {
         var typeMenuItems = new List<MenuItem>
         {
-            new MenuItem()
+            new()
             {
                 Title = "Player vs AI",
                 Shortcut = "1",
                 MenuItemAction = () => "PvsAi"
             },
-            new MenuItem()
+            new()
             {
                 Title = "Player vs Player",
                 Shortcut = "2",
                 MenuItemAction = () => "PvsP"
             },
-            new MenuItem()
+            new()
             {
                 Title = "AI vs AI",
                 Shortcut = "3",

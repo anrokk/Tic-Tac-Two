@@ -217,7 +217,7 @@ public class TicTacTwoBrain
         return false;
     }
 
-    private bool CheckForWinner(EGamePiece gamePiece)
+    public bool CheckForWinner(EGamePiece gamePiece)
     {
         var winCondition = _gameState.GameConfiguration.WinCondition;
 
