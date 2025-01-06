@@ -92,17 +92,11 @@ public class Menu
                 return _menuItemExit.Shortcut;
             }
 
-            if ((menuItem.Shortcut == _menuItemReturnMain.Shortcut || menuReturnValue == _menuItemReturnMain.Shortcut) 
-                && EMenuLevel != EMenuLevel.Main)
+            if ((menuItem.Shortcut == _menuItemReturnMain.Shortcut || menuReturnValue == _menuItemReturnMain.Shortcut) && EMenuLevel != EMenuLevel.Main)
             {
                 return _menuItemReturnMain.Shortcut;
             }
-            
-            if (!string.IsNullOrWhiteSpace(menuReturnValue))
-            {
-                return menuReturnValue;
-            }
-            
+
         } while (true);
     }
 
