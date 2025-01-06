@@ -25,17 +25,17 @@ public class Menus
         
         var menuItems = new List<MenuItem>
         {
-            new MenuItem()
-            {
-                Title = "Options",
-                Shortcut = "O",
-                MenuItemAction = OptionsMenu.Run
-            },
-            new MenuItem()
+            new()
             {
                 Title = "New Game",
                 Shortcut = "N",
                 MenuItemAction = gameController.StartNewGame
+            },
+            new()
+            {
+                Title = "Options",
+                Shortcut = "O",
+                MenuItemAction = OptionsMenu.Run
             }
         };
         
@@ -50,6 +50,6 @@ public class Menus
             });
         }
         
-        MainMenu = new Menu("TicTacTwo", menuItems, EMenuLevel.Main);
+        MainMenu = new Menu("TIC-TAC-TWO", menuItems, EMenuLevel.Main);
     }
 }

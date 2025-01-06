@@ -1,7 +1,6 @@
 ﻿using ConsoleApp;
 using DAL;
 using DAL.Database;
-using Microsoft.EntityFrameworkCore;
 
 // Game starts here
 
@@ -27,7 +26,7 @@ return;
 
 string AskForUsername()
 {
-    Console.WriteLine("Welcome to Tic-Tac-Two!");
+    Console.WriteLine("Welcome to TIC-TAC-TWO!");
     Console.Write("Choose an username: ");
     var name = Console.ReadLine();
 
