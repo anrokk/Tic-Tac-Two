@@ -1,0 +1,52 @@
+@page "/new-game"
+@using Domain
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebApp.Pages.NewGame
+
+@{
+    ViewData["Title"] = "New Game";
+}
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <h1>Start a new TIC-TAC-TWO game</h1>
+        <br/>
+        <form method="post" asp-page-handler="CreateGame">
+            <select class="form-select" aria-label="Default select example" name="configName" required>
+                <option value="" disabled selected>Select a configuration</option>
+                @foreach (var config in Model.Configurations)
+                {
+                    <option value=@config.Name>@config.Name</option>
+                }
+            </select>
+            <br/>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="GameMode" value="@EGameMode.AivsAi">
+                    <label class="form-check-label">
+                        AI vs AI
+                    </label>
+                </div>
+                <br/>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="GameMode" value="@EGameMode.PvsAi" checked>
+                    <label class="form-check-label">
+                        PLAYER VS AI
+                    </label>
+                </div>
+                <br/>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="GameMode" value="@EGameMode.PvsP">
+                    <label class="form-check-label">
+                        PLAYER VS PLAYER
+                    </label>
+                </div>
+            </div>
+            <br/>
+            <button type="submit" class="btn btn-primary">START</button>
+        </form>
+    </div>
+    <div class="col-md-4"></div>
+</div>
+

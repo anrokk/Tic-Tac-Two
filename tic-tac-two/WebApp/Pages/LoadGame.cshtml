@@ -1,0 +1,54 @@
+@page "/load-game"
+@using Domain
+@model WebApp.Pages.LoadGame
+
+@{
+    ViewData["Title"] = "Load Game";
+}
+<div class="container text-center">
+    <h1>Load Game</h1>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form method="post" asp-page-handler="LoadTheGame">
+                <h4>Select the game</h4>
+                @foreach (var game in Model.GamesList)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gameId" value="@game.GetGameId()" required>
+                        <label class="form-check-label">
+                            @game.GetGameConfigurationName() @game.GetCreatedAt()
+                        </label>
+                    </div>
+                }
+                <br/>
+                <h4>Select the game type</h4>
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="GameMode" value="@EGameMode.PvsAi" checked>
+                        <label class="form-check-label">
+                            PLAYER VS AI
+                        </label>
+                    </div>
+                    <br/>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="GameMode" value="@EGameMode.PvsP">
+                        <label class="form-check-label">
+                            PLAYER VS PLAYER
+                        </label>
+                    </div>
+                    <br/>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="GameMode" value="@EGameMode.AivsAi">
+                        <label class="form-check-label">
+                            AI vs AI
+                        </label>
+                    </div>
+                </div>
+                <br/>
+                <button type="submit" class="btn btn-primary">PLAY</button>
+            </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
