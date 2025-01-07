@@ -31,13 +31,17 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
+        @if (Context.Session.GetString("Username") != null)
+        {
+            <p class="text-start">Welcome, @Context.Session.GetString("Username")!</p>
+        }
         @RenderBody()
     </main>
 </div>
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2025 - WebApp - <a asp-area="" asp-page="/Privacy">Privacy</a>
+        &copy; 2025 - TIC-TAC-TWO - <a asp-area="" asp-page="/Privacy">Privacy</a>
     </div>
 </footer>
 

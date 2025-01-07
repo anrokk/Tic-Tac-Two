@@ -1,0 +1,185 @@
+@page "/game/{gameid}/{gamemode}/{player}"
+@using Domain
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebApp.Pages.Game
+
+@{
+    ViewData["Title"] = "Game";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        @if (Model.Player == EGamePiece.X && Model.GameMode == EGameMode.PvsP)
+        {
+            <div>
+                <span>Invite a friend to play!</span>
+                <button id="copyInviteLink"
+                        data-url="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Player = EGamePiece.O })"
+                        onclick="copyInviteLink(this)"
+                        class="btn btn-primary">
+                    Copy Invite Link
+                </button>
+                <p id="copyMessage" style="display: none; color: green;">Link copied to clipboard!</p>
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="card text-center">
+                <div class="card-body alert-danger">
+                    @Model.ErrorMessage
+                </div>
+            </div>
+        }
+        @if (!string.IsNullOrEmpty(Model.Message))
+        {
+            <div class="card text-center">
+                <div class="card-body alert-success">
+                    @Model.Message
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        <div class="grid-move-container">
+            @if (Model.Context.MovingGrid)
+            {
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "up-left" })" class="grid-box">↖</a>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "up" })" class="grid-box">↑</a>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "up-right" })" class="grid-box">↗</a>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "left" })" class="grid-box">←</a>
+                <div class="grid-box current-position">●</div>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "right" })" class="grid-box">→</a>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "down-left" })" class="grid-box">↙</a>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "down" })" class="grid-box">↓</a>
+                <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid", direction = "down-right" })" class="grid-box">↘</a>
+            }
+        </div>
+    </div>
+</div>
+@if (Model.Player != Model.GameState.NextMoveBy && Model.GameMode != EGameMode.AivsAi)
+{
+    <span>Waiting for the other player to make a move...</span>
+    <button class="btn btn-primary" id="refreshPageButton" onclick="refreshPage()">Refresh Page</button>
+}
+@if (Model.GameMode == EGameMode.AivsAi)
+{
+    <span>Refresh the page to have AI make a move</span>
+    <button class="btn btn-primary" id="refreshPageButton" onclick="refreshPage()">Refresh Page</button>
+}
+
+<h3 class="text-center">@Model.Configuration.Name</h3>
+<h4 class="text-center">You are playing as: @Model.Player</h4>
+<h4 class="text-center">Move by: @Model.GameState.NextMoveBy</h4>
+
+<div class="row">
+    <div class="container d-flex justify-content-center align-items-center" style="overflow: hidden;">
+
+        <form method="get" asp-page="Game">
+            <input type="hidden" name="gameId" value="@Model.GameId" />
+            <input type="hidden" name="selectedX" value="@Model.Context.SelectedX" />
+            <input type="hidden" name="selectedY" value="@Model.Context.SelectedY" />
+
+            <table class="table border border-dark bg-dark" style="table-layout: fixed; width: auto; max-width: 90vw;">
+                @for (var y = 0; y < Model.GameInstance.DimensionY; y++)
+                {
+                    <tr>
+                        @for (var x = 0; x < Model.GameInstance.DimensionX; x++)
+                        {
+                            var isGridCell = x >= Model.GameInstance.GridStartX && x <= Model.GameInstance.GridEndX &&
+                                                 y >= Model.GameInstance.GridStartY && y <= Model.GameInstance.GridEndY;
+
+                            var cellClass = isGridCell ? "game-cell bg-white" : "game-cell non-grid-cell";
+                            var gamePiece = ConsoleUI.Visualizer.DrawGamePiece(Model.GameInstance.GameBoard[x][y]);
+
+                            <td class="@cellClass @(x == Model.Context.SelectedX && y == Model.Context.SelectedY ? "selected-piece" : "")">
+                                @if (Model.Player == Model.GameState.NextMoveBy)
+                                {
+                                    if (Model.Context.MovingPiece)
+                                    {
+                                        <a href="@Url.Page("/Game", new
+                                                 {
+                                                     Model.GameId,
+                                                     Model.GameMode,
+                                                     Model.Player,
+                                                     move = "piece",
+                                                     x, y,
+                                                     selectedX = Model.Context.SelectedX,
+                                                     selectedY = Model.Context.SelectedY
+                                                 })"
+                                           class="full-cell-link">
+                                            @if (!string.IsNullOrEmpty(gamePiece))
+                                            {
+                                                @gamePiece
+                                            }
+                                            else
+                                            {
+                                                <span>&nbsp;</span>
+                                            }
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Page("/Game", new
+                                                 {
+                                                     Model.GameId,
+                                                     Model.GameMode,
+                                                     Model.Player,
+                                                     x, y,
+                                                     selectedX = Model.Context.SelectedX,
+                                                     selectedY = Model.Context.SelectedY
+                                                 })"
+                                           class="full-cell-link">
+                                            @if (!string.IsNullOrEmpty(gamePiece))
+                                            {
+                                                @gamePiece
+                                            }
+                                            else
+                                            {
+                                                <span>&nbsp;</span>
+                                            }
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <a class="full-cell-link">
+                                        @if (!string.IsNullOrEmpty(gamePiece))
+                                        {
+                                            @gamePiece
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    </a>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </table>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "grid" })" class="grid-box">Move Grid</a>
+        <br/>
+        <a href="@Url.Page("/Game", new { Model.GameId, Model.GameMode, Model.Player, move = "piece" })" class="grid-box">Move Piece</a>
+    </div>
+    <div class="col-md-4">
+        @if (Model.Context.MovingGrid)
+        {
+            <button onclick="@Model.Context.MovingGrid=false; refreshPage()" class="grid-box">Cancel</button>
+        }
+        @if (Model.Context.MovingPiece)
+        {
+            <button onclick="@Model.Context.MovingPiece=false; refreshPage()" class="grid-box">Cancel</button>
+        }
+    </div>
+</div>
+

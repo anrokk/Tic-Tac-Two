@@ -6,7 +6,9 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome to TIC-TAC-TWO!</h1>
+    <br/>
     <h4>Please enter your desired username to get started</h4>
+    <br/>
 </div>
 
 <div class="row">
@@ -23,12 +25,14 @@
                 </div>
             }
             
+            <br/>
             <div class="form-group">
                 <label asp-for="Username" class="control-label"></label>
                 <input asp-for="Username" class="form-control"/>
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
             
+            <br/>
             <div class="form-group">
                 <input type="submit" value="Enter" class="btn btn-primary"/>
             </div>
