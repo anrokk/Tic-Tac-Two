@@ -5,10 +5,6 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
-    
-    <ItemGroup>
-      <Folder Include="Pages\Configurations\" />
-    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ConsoleUI\ConsoleUI.csproj" />

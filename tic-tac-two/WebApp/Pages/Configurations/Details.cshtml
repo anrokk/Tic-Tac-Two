@@ -1,0 +1,62 @@
+@page
+@model WebApp.Pages.Configurations.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Configuration Details</h1>
+
+<br/>
+
+<div>
+    <h4>Database Configuration</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.BoardSizeWidth)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.BoardSizeWidth)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.BoardSizeHeight)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.BoardSizeHeight)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.GridSizeWidth)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.GridSizeWidth)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.GridSizeHeight)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.GridSizeHeight)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.WinCondition)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.WinCondition)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Configuration.MovePieceAfterNMoves)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Configuration.MovePieceAfterNMoves)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
