@@ -1,6 +1,5 @@
 using Domain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DAL.Database;
 
@@ -48,7 +47,7 @@ public class DatabaseInitializer
             {
                 new DbConfiguration
                 {
-                    ConfigurationName = "Classical Tic-Tac-Two",
+                    ConfigurationName = "Classical",
                     BoardSizeWidth = 5,
                     BoardSizeHeight = 5,
                     GridSizeWidth = 3,

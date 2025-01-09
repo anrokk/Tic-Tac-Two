@@ -10,11 +10,6 @@ public class GameConfiguration
     public int WinCondition { get; set; } = 3;
     public int MovePieceAfterNMoves { get; set; } = 3;
     public string Username { get; set; } = null!;
-    public override string ToString() => 
-        $"Configuration name {Name}" +
-        $"Board {BoardSizeWidth}x{BoardSizeHeight}, "+
-        $"Grid {GridSizeWidth}x{GridSizeHeight}, "+
-        $"to win: {WinCondition}, " + 
-        $"can move piece after {MovePieceAfterNMoves} moves";
-    
+
+    public override string ToString() => $"Board Size: {BoardSizeWidth} x {BoardSizeHeight}, to win: {WinCondition}, move after moves: {MovePieceAfterNMoves}";
 }

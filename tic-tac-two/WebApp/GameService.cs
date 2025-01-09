@@ -1,4 +1,3 @@
-using ConsoleUI;
 using DAL;
 using Domain;
 using GameLogic;
@@ -108,7 +107,7 @@ public class GameService(IGameRepository gameRepo, GameContext context)
     {
         if (!context.SelectedX.HasValue || !context.SelectedY.HasValue)
         {
-            if (Visualizer.DrawGamePiece(gameInstance.GameBoard[x][y]) == " ")
+            if (ConsoleUI.Visualizer.DrawGamePiece(gameInstance.GameBoard[x][y]) == " ")
                 return (false, "No piece at the selected location.");
             
             if (gameInstance.GameBoard[x][y] != gameInstance.GetCurrentGamePiece())

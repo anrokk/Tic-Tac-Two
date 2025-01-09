@@ -1,7 +1,7 @@
-using DAL;
-using DAL.Database;
-using Domain;
 using Microsoft.EntityFrameworkCore;
+using DAL.Database;
+using DAL;
+using Domain;
 using WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
