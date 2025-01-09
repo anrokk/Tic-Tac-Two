@@ -16,7 +16,7 @@ public static class Visualizer
     }
 
     private const string Reset = "\u001b[0m";
-    private const string Highlight = "\u001b[42m";
+    private const string Highlight = "\u001b[44m";
     
     public static void DrawBoard(TicTacTwoBrain gameInstance)
     {
