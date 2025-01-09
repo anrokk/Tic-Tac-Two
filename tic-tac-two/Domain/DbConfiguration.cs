@@ -21,10 +21,5 @@ public class DbConfiguration
     public ICollection<DbSaveGame> SaveGames { get; init; } = new List<DbSaveGame>();
     [MaxLength(128)]
     public string? Username { get; set; }
-    
-    public override string ToString()
-    {
-        return $"{ConfigurationName}, Width: {BoardSizeWidth}, Height: {BoardSizeHeight}, ID: {Id}";;
-    }
-
+    public override string ToString() => $"{ConfigurationName}, Width: {BoardSizeWidth}, Height: {BoardSizeHeight}, Id: {Id}";
 }

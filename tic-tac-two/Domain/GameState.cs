@@ -1,6 +1,6 @@
 namespace Domain;
 
-public class GameState
+public class GameState()
 {
     public string GameId { get; init; } = null!;
     public string GameConfigurationName { get; init; } = null!;
@@ -16,7 +16,7 @@ public class GameState
     public int GridEndX { get; set; }
     public int GridEndY { get; set; }
     
-    public GameState(EGamePiece[][] gameBoard, GameConfiguration gameConfiguration, string? gameId = null)
+    public GameState(EGamePiece[][] gameBoard, GameConfiguration gameConfiguration, string? gameId = null) : this()
     {
         GameBoard = gameBoard;
         GameConfiguration = gameConfiguration;
@@ -24,7 +24,7 @@ public class GameState
         GameConfigurationName = gameConfiguration.Name;
         CreatedAt = DateTime.Now;
     }
-
+    
     public override string ToString()
     {
         return System.Text.Json.JsonSerializer.Serialize(this);
