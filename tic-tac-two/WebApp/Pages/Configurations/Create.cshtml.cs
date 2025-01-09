@@ -13,7 +13,10 @@ namespace WebApp.Pages.Configurations
         public IActionResult OnGet()
         {
             Username = UsernameHelper.GetUsername(HttpContext, Username)!;
-
+            Configuration = new GameConfiguration()
+            {
+                Username = Username
+            };
             return Page();
         }
 
@@ -23,6 +26,7 @@ namespace WebApp.Pages.Configurations
         public IActionResult OnPost()
         {
             Username = UsernameHelper.GetUsername(HttpContext, Username)!;
+            Configuration.Username = Username;
             if (!ModelState.IsValid)
             {
                 return Page();
