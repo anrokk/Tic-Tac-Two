@@ -24,8 +24,8 @@ body {
 .square {
   width: 50px;
   height: 50px;
-  border: 1px solid black; /* Ensures visible grid lines */
-  overflow: hidden; /* Prevents content overflow */
+  border: 1px solid black; 
+  overflow: hidden; 
 }
 
 .form-group {
@@ -36,39 +36,39 @@ body {
   margin-bottom: 0.5em;
 }
 
-/* Ensure the anchor tag fills the entire table cell */
+
 .full-cell-link {
   display: block;
   height: 100%;
   width: 100%;
-  text-decoration: none; /* Remove underline for links */
+  text-decoration: none; 
 }
 
-/* Style for the game cells */
+
 .game-cell {
   position: relative;
   text-align: center;
   vertical-align: middle;
-  height: 50px; /* Adjust height as needed */
-  width: 50px; /* Adjust width as needed */
-  border: 1px solid black; /* Optional: Add borders to cells */
+  height: 50px; 
+  width: 50px; 
+  border: 1px solid black; 
 }
 
 .selected-piece {
-  border: 2px solid yellow;
+  border: 2px solid green;
 }
 
-/* Optional: Hover effect for clickable cells */
+
 .full-cell-link:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Lighten background on hover */
+  background-color: rgba(255, 255, 255, 0.1); 
   cursor: pointer;
 }
 
 .grid-move-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 5px; /* Reduce the spacing between boxes */
-  max-width: 120px; /* Smaller container */
+  gap: 5px; 
+  max-width: 120px; 
   margin: auto;
 }
 

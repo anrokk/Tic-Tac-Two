@@ -22,6 +22,7 @@
                 <p id="copyMessage" style="display: none; color: green;">Link copied to clipboard!</p>
             </div>
         }
+        <br/>
     </div>
     <div class="col-md-4">
         @if (!string.IsNullOrEmpty(Model.ErrorMessage))
@@ -40,6 +41,7 @@
                 </div>
             </div>
         }
+        <br/>
     </div>
     <div class="col-md-4">
         <div class="grid-move-container">
@@ -58,6 +60,7 @@
         </div>
     </div>
 </div>
+<br/>
 @if (Model.Player != Model.GameState.NextMoveBy && Model.GameMode != EGameMode.AivsAi)
 {
     <span>Waiting for the other player to make a move...</span>
@@ -68,7 +71,6 @@
     <span>Refresh the page to have AI make a move</span>
     <button class="btn btn-primary" id="refreshPageButton" onclick="refreshPage()">Refresh Page</button>
 }
-
 <h3 class="text-center">@Model.Configuration.Name</h3>
 <h4 class="text-center">You are playing as: @Model.Player</h4>
 <h4 class="text-center">Move by: @Model.GameState.NextMoveBy</h4>
