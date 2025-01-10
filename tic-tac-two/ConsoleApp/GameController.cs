@@ -14,6 +14,12 @@ public class GameController(IConfigRepository configRepository, IGameRepository 
     public string LoadSavedGame()
     {
         var chosenGameId = ChooseGameSave();
+        
+        if (chosenGameId is "R" or "E")
+        {
+            return chosenGameId;
+        }
+        
         var chosenGame = gameRepository.LoadGame(chosenGameId, username);
         var gameInstance = new TicTacTwoBrain(chosenGame);
         
